@@ -1,0 +1,120 @@
+﻿@model FinanceAnalytic.Models.ViewModels.SpendingsViewModel
+
+@{
+    ViewData["Title"] = "Создание";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<html lang="ru">
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/SpendingSubCategoriesDropDown.js"></script>
+    <script type="text/javascript" src="~/js/CurrencyConverterScript.js"></script>
+    <script type="text/javascript" src="~/js/CurrencySelectedChangedScript.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h4>Расход</h4>
+        <form asp-action="Create">
+            <div class="row">
+                <div class="col-md-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Date" class="control-label"></label><span class="required">*</span>
+                        <input name="Date" required asp-for="Date" class="form-control" data-val="true" />
+                        <span asp-validation-for="Date" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SpendingCategoryId" class="control-label"></label><span class="required">*</span>
+                        @Html.DropDownListFor(Model => Model.SpendingCategoryId, Model.SpendingCategories as SelectList, null,
+                        htmlAttributes: new { @class = "form-control", id = "SpendingCategoryId" })
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SpendingSubCategories" class="control-label"></label>
+                        @Html.DropDownListFor(Model => Model.SpendingSubCategoryId, Model.SpendingSubCategories as SelectList, "Не выбрано",
+                         htmlAttributes: new { @class = "form-control", id = "SpendingSubCategoryId" })
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Sum" class="control-label"></label><span class="required">*</span>
+                        <input name="sum" required asp-for="Sum" class="form-control" />
+                        <span asp-validation-for="Sum" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ImportanceCategoryId" class="control-label"></label>
+                        @Html.DropDownListFor(Model => Model.ImportanceCategoryId, Model.ImportanceCategoriesId as SelectList, "Не выбрано",
+                        htmlAttributes: new { @class = "form-control", Id = "ImportanceCategoryId" })
+
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Comments" class="control-label"></label>
+                        <input asp-for="Comments" class="form-control" />
+                        <span asp-validation-for="Comments" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <input type="submit" value="Добавить" class="button_yellow_s" />|
+                        <a asp-action="Index" class="button_yellow_s">Вернуться к списку</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Currencies" class="control-label">Перевод в @Model.UserCurrencyName из</label>
+                        @Html.DropDownListFor(Model => Model.CurrencyId, Model.Currencies as SelectList, "Не выбрано",
+                         htmlAttributes: new { @class = "form-control", id = "CurrencyId" })
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CurrencyRate" class="control-label">Курс валюты</label>
+                        <input asp-for="CurrencyRate" class="form-control" />
+                        <span asp-validation-for="CurrencyRate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SumInCurrency" class="control-label">Сумма в валюте:</label>
+                        <input asp-for="SumInCurrency" class="form-control" />
+                        <span asp-validation-for="SumInCurrency" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input id="button_convert" type="button" class="button_yellow_s" value="Конвертировать" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#CategoryId").change(function () {
+                let dropdown = $('#SubCategoryId');
+                dropdown.empty();
+                dropdown.append('<option selected="true" disabled>Не выбрано</option>');
+                dropdown.prop('selectedIndex', 0);
+                $.ajax({
+
+                    type: 'POST',
+                    url: '@Url.Action("GetSpendingSubCategories")',
+                    dataType: 'json',
+                    data: { id: $(this).val() },
+                    success: function (items) {
+                        $.each(items, function (_key, _value) {
+                            dropdown.append($('<option></option>').attr('value', _value.value).text(_value.text));
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve states.' + ex);
+                    }
+                });
+                return false;
+            })
+        });
+
+
+
+    </script>*@
+
+
+@*<script type="text/javascript">
+        $(document).ready(function () {
+            $("#CategoryId").change(function () { changeSpendingSubCategories();})
+        });
+    </script>*@

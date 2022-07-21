@@ -1,0 +1,26 @@
+﻿
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap');
+
+
+.account_container {
+    margin: auto;
+    margin-top: 160px;
+    max-width: 400px;
+    /*background-image: url(/images/slide_1.jpg);*/
+    background-color: #ffffff;
+    box-shadow: -2px 0px 35px 0px rgba(0, 0, 0, 0.2);
+    color: #4e4e4e;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+    .account_container h2 {
+        margin-bottom: 20px;
+        
+    }
+    .account_container input {
+        width:100%;
+    }

@@ -1,0 +1,45 @@
+﻿@model IEnumerable<FinanceAnalytic.Models.Currency>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <h1>Список валюь</h1>
+
+    <p>
+        <a asp-action="Create">Добавить</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">
+                        <img src="~/images/icon_edit.png" />
+                    </a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">
+                        <img src="~/images/icon_details.png" />
+                    </a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">
+                        <img src="~/images/icon_delete.png" />
+                    </a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,200 @@
+﻿@model FinanceAnalytic.Models.ViewModels.AllUsersStatistics
+
+@{
+
+    ViewData["Title"] = "Статистика";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int usersCount = 0;
+    int spendingsCount = 0;
+    if (Model.UsersRegisterAnalytics != null && Model.UsersRegisterAnalytics.Any())
+        usersCount = Model.UsersRegisterAnalytics.Sum(c => c.Count);
+    //if (Model.SpendingsByCategories!=null && Model.SpendingsByCategories.Any())
+    //    spendingsCount = Model.SpendingsByCategories.Sum(c => c.Count);
+}
+
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/SpendingSubCategoriesDropDown.js"></script>
+    <script type="text/javascript" src="~/js/DrawSpendingsPieChart.js"></script>
+</head>
+
+<div class="container">
+
+    <div>
+        <form method="get">
+            <div class="row row_filters">
+        
+                    <label>c:</label>
+                    <input asp-for="PeriodBegin" class="form-control-sm" id="PeriodBegin" />
+                    <span asp-validation-for="PeriodBegin" class="text-danger"></span>
+                    <label>по:</label>
+                    <input asp-for="PeriodEnd" class="form-control-sm" id="PeriodEnd" />
+                    <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+                
+                <div class="row sub_filters">
+                    <label class="control-label">Групировка по: </label>
+                    @Html.DropDownListFor(Model => Model.SelectedPeriodTypes, Model.PeriodTypes as SelectList, null, htmlAttributes: new { @class = "form-control-sm", Id = "PeriodTypes" })
+                </div>
+
+                <input type="submit" value="Поиск" class="button_yellow_s" />
+            </div>
+        </form>
+    </div>
+
+
+    <h1>Регистрация пользователей в системе</h1>
+    @if (Model.UsersRegisterAnalytics.Any())
+    {
+        <h2>Количество новых пользователей с @Model.PeriodBegin.ToShortDateString() по @Model.PeriodEnd.ToShortDateString()</h2>
+        <div id="line_chart_div" class="chart"></div>
+        <div>
+            <table class="table100 ">
+                <thead>
+                    <tr class="row100 head">
+                        <th>
+                            Дата
+                        </th>
+                        <th>
+                            Количество новых пользователей
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.UsersRegisterAnalytics)
+                    {
+                        <tr class="row100">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DateString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Count)
+                            </td>
+                        </tr>
+                    }
+                    <tr class="row100">
+                        <td>
+                            Итого:
+                        </td>
+                        <td>
+                            @usersCount
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    }
+    @*<h1>Расходы по категориям:</h1>
+        <div>
+            <h2>Количество записей расходов по категориям за указанный период:</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Наименование категории
+                        </th>
+
+                        <th>
+                            Количество записей
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SpendingsByCategories)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Count)
+                            </td>
+                        </tr>
+                    }
+                <tr>
+                    <td>
+                        Итого:
+                    </td>
+                    <td>
+                        @spendingsCount
+                    </td>
+                </tr>
+
+
+                </tbody>
+            </table>
+        </div>*@
+</div>
+
+
+
+
+<script>
+     thisList = @Json.Serialize(Model.UsersRegisterAnalytics.ToList());
+
+        $.getScript("https://www.gstatic.com/charts/loader.js", function () {
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.load("visualization", "1", { packages: ["corechart"] });
+            google.charts.setOnLoadCallback(myCallback);
+
+            function myCallback() {
+
+                    $.ajax({
+
+                        url: '/DataForChartsHelper/GetChartDataForUserRegistrAnalytic',
+                        type: 'POST',
+                        data: {
+                            list: thisList
+                        },
+                    success: function (djson) {
+                        if (djson) {
+
+                            var data = new google.visualization.DataTable();
+                            data.addColumn('date', 'Дата');
+                            data.addColumn('number', 'Количество');
+                            $.each(djson, function (index, item) {
+                                let d = new Date(item[0]);
+                                data.addRow([d, Number(item[1])]);
+                            });
+
+
+                            var myTitle = "Пользователей зарегестрировано с  " + @Json.Serialize(Model.PeriodBegin.ToShortDateString()) + " по " + @Json.Serialize(Model.PeriodEnd.ToShortDateString());
+                            var chart = new google.visualization.LineChart(document.getElementById('line_chart_div'));
+                            var options = {
+                                width: '50%',
+                                height: '50%',
+                                hAxis: {
+                                    format: 'yyyy-MM-dd'
+                                },
+                                vAxis: { format: '0' },
+
+                                gridlines: {
+                                    count: -1,
+                                    units: {
+                                        days: { format: 'yyyy-MM-dd' },
+                                    }
+                                },
+                                bar: { groupWidth: '75%' },
+
+
+                               colors: ['#e0440e', '#e67e3e', '#e46328', '#f6c386', '#eca06e', '#ffdc96'],
+
+                            };
+
+
+                            chart.draw(data, options);
+                        }
+                    },
+                    error: function () {
+                        alert("Ошибка загрузки данных. Повторите пожалуйста");
+                    }
+                });
+            };
+                  $(document).ready(function () {
+                $(window).resize(function () {
+                    myCallback();
+                });
+            });
+        });
+
+</script>

@@ -1,0 +1,42 @@
+﻿@model IEnumerable<FinanceAnalytic.Models.SpendingCategory>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <div class="list_header row">
+
+        <h1>Категории расходов</h1>
+        <a class="button_yellow_s" asp-action="Create"> Добавить категорию</a>
+
+    </div>
+    <table class="table100 one_last_column">
+        <thead>
+            <tr class="row100 head">
+                <th>
+                    @Html.DisplayNameFor(Model => Model.Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="row100">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">
+                            <img src="~/images/icon_edit.png" />
+                        </a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">
+                            <img src="~/images/icon_delete.png" />
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

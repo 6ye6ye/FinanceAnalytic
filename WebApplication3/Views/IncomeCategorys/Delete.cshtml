@@ -1,0 +1,29 @@
+﻿@model FinanceAnalytic.Models.IncomeCategory
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    
+
+    <h3>Подтвердите удаление</h3>
+    <div>
+        <h4>Категория доходов</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Удалить" class="button_yellow_s"/> |
+            <a asp-action="Index" class="button_yellow_s">Вернуться к списку</a>
+        </form>
+    </div>
+</div>

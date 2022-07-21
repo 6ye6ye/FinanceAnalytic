@@ -1,0 +1,497 @@
+﻿@model FinanceAnalytic.Models.ViewModels.GoalAnalyticViewModel
+
+@{
+
+    string dateNow = DateTime.Now.Date.ToString();
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool hasGoalsAnalyticList = false;
+    bool hasOneGoalAnalyticList = false;
+    if (Model.GoalsAnalyticList != null && Model.GoalsAnalyticList.Count > 0) hasGoalsAnalyticList = true;
+    if (Model.OneGoalAnalyticList != null && Model.OneGoalAnalyticList.Count > 0) hasOneGoalAnalyticList = true;
+    bool hasNoRecords = (hasGoalsAnalyticList == false) && (hasOneGoalAnalyticList == false);
+
+}
+
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/SpendingSubCategoriesDropDown.js"></script>
+    <script type="text/javascript" src="~/js/DrawSpendingsPieChart.js"></script>
+</head>
+
+<div class="container">
+    <h1>Анализ целей</h1>
+
+    <form method="get">
+        <div class="row row_filters">
+            @Html.DropDownListFor(Model => Model.SelectedGoal, Model.Goals as SelectList, "Все цели",
+            htmlAttributes: new { @class = "form-control-sm", Id = "SelectedGoalId" })
+
+            @if (hasOneGoalAnalyticList)
+            {
+                <label class="control-label">Групировка по: </label>
+                @Html.DropDownListFor(Model => Model.SelectedPeriodTypes, Model.PeriodTypes as SelectList, null,
+                htmlAttributes: new { @class = "form-control-sm", Id = "PeriodTypes" })
+            }
+            @if (hasGoalsAnalyticList)
+            {
+                <div class="row sub_filters">
+                    <label>Скрыть достигнутые:  </label>
+                    <input asp-for="HideAchived" type="checkbox" id="HideAchived">
+                </div>
+            }
+            <input type="submit" value="Поиск" class="button_yellow_s" />
+
+        </div>
+    </form>
+    @if (hasNoRecords)
+    {
+        <h3>По данному запросу записи отстуствуют. </h3>
+    }
+    @if (hasGoalsAnalyticList)
+    {
+        <h3>Цели на @DateTime.Now.ToShortDateString()</h3>
+
+        <div id="line_chart_div" class="chart"></div>
+
+        <div>
+            <div class="justify-content-between">
+                <button id="button_export" class="button_yellow_s" onclick="exportToExcel()">Экспорт в EXCEL</button>
+            </div>
+        </div>
+
+      
+            <table class="table100 ">
+                <thead>
+                    <tr class="row100 head">
+                        <th>
+                            @Html.DisplayNameFor(Model => Model.Goals)
+                        </th>
+                        <th>
+                            Сумма накопленная
+                        </th>
+                        <th>
+                            Сумма необходимая
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.GoalsAnalyticList)
+                    {
+
+                        <tr class="row100">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GoalName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CurrentSum)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GoalSum)
+                            </td>
+                        </tr>
+                    }
+
+
+                </tbody>
+            </table>
+ 
+    }
+    @if (hasOneGoalAnalyticList)
+    {
+        var sum = @Model.OneGoalAnalyticList.Sum(c => c.CurrentSum);
+        var different = @Model.GoalSum - sum;
+        <div id="line_chart_div" class="chart"></div>
+
+
+        <div class="justify-content-between">
+            <h1>Цель "@Model.GoalName": @Model.GoalSum  </h1>
+            <button id="button_export" class="button_yellow_s" onclick="exportToExcel()">Экспорт в EXCEL</button>
+        </div>
+   
+
+            <table class="table100 ">
+
+                <thead>
+                    <tr class="row100 head">
+                        <th>
+                            Дата
+                        </th>
+
+                        <th>
+                            Сумма
+                        </th>
+                        <th>
+                            Накопленая сумма
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OneGoalAnalyticList)
+                    {
+                        <tr class="row100">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DateString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CurrentSum)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccumulationSum)
+                            </td>
+                        </tr>
+                    }
+                    <tr class="row100">
+                        <td>
+                        </td>
+                        <td>
+                            Осталось накопить:
+                        </td>
+
+                        <td>
+                            @different
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+    }
+</div>
+
+<script>
+    function changeAchived() {
+        let id =@Json.Serialize(Model.SelectedGoal);
+        let isAchived = $('#IsAchived').val();
+        $.ajax({
+            url: '/Goals/ChangeIsAchived',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                id,
+                isAchived
+            },
+            success: function (isChanged) {
+            },
+            error: function (ex) {
+                alert('Failed to retrieve states.' + ex);
+            }
+        });
+    };
+</script>
+@*Google chats script*@
+<script>
+    function startLoader() {
+        $("#button_export").text('Загрузка...');
+        $("#button_export").attr('disabled',true);
+    }
+
+    function stopLoader() {
+        $("#button_export").text('Экспорт в EXCEL');
+        $("#button_export").attr('disabled', false);
+    }
+
+   function exportToExcel() {
+       if (@Json.Serialize(hasOneGoalAnalyticList)) {
+           thisOneGoalList = @Json.Serialize(Model.OneGoalAnalyticList);
+           thisGoalsList = null;
+       }
+       else  {
+           thisOneGoalList = null;
+           thisGoalsList = @Json.Serialize(Model.GoalsAnalyticList);
+       }
+       $.ajax({
+           url: '/ConverterToExcelHelper/ConvertToExcelGoalAnalytics',
+           type: 'POST',
+           beforeSend: function () {
+           startLoader();
+           },
+           xhr: function () {
+               var xhr = new XMLHttpRequest();
+               xhr.onreadystatechange = function () {
+                   if (xhr.readyState == 2) {
+                       if (xhr.status == 200) {
+                           xhr.responseType = "blob";
+                       } else {
+                           xhr.responseType = "text";
+                       }
+                   }
+               };
+               return xhr;
+           },
+           data: {
+               oneGoalList: thisOneGoalList,
+               goalsList: thisGoalsList,
+               @*goalName: @Model.GoalName,*@
+               goalSum: @Json.Serialize(@Model.GoalSum)
+           },
+           success: function (response) {
+
+               var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+               var url = window.URL.createObjectURL(blob);
+               var a = document.createElement("a");
+               a.href = url;
+               a.download = "@User.Identity.Name.ToString()" + "_GoalAnalytic_" + "@DateTime.Now.ToShortDateString()" + ".xlsx";
+               document.body.appendChild(a);
+               a.click();
+           },
+              complete: function () {
+                    stopLoader();
+                    }
+                });
+       return false;
+    }
+</script>
+
+
+
+<script>
+    $(document).ready(function () {
+        $.getScript("https://www.gstatic.com/charts/loader.js", function () {
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.load("visualization", "1", { packages: ["corechart"] });
+            google.charts.setOnLoadCallback(myCallback);
+
+            function myCallback() {
+                if (@Json.Serialize(hasGoalsAnalyticList)) {
+                      thisList = @Json.Serialize(Model.GoalsAnalyticList);
+                    $.ajax({
+                        url: '/DataForChartsHelper/GetColumnChartDataForGoals',
+                        type: 'POST',
+                        data: {
+                            list: thisList
+                        },
+                        success: function (djson) {
+                            if (djson) {
+                                djson[0].push({ role: 'annotation' });
+
+                                var data = google.visualization.arrayToDataTable(djson);
+                                var chart = new google.visualization.ColumnChart(document.getElementById('line_chart_div'));
+
+                                var options = {
+                                    width: '50%',
+                                    height: '50%',
+                                    legend: { position: 'top', maxLines: 3 },
+                                    annotations: {
+                                        alwaysOutside: true
+                                    },
+                                    annotations: {
+                                        textStyle: {
+                                            color: 'black',
+                                        }
+                                    },
+                                    bar: { groupWidth: '75%' },
+                                   colors: ['#e0440e', '#e67e3e', '#e46328', '#f6c386', '#eca06e', '#ffdc96'],
+                                    isStacked: true
+                                };
+                                chart.draw(data, options);
+                            }
+                        }, 
+                        error: function () {
+                            alert("Ошибка загрузки данных. Повторите пожалуйста");
+                        }
+                    });
+                };
+                if (@Json.Serialize(hasOneGoalAnalyticList)) {
+                              thisList = @Json.Serialize(Model.OneGoalAnalyticList);
+                    $.ajax({
+
+                        url: '/DataForChartsHelper/GetChartDataForOneGoal',
+                        type: 'POST',
+                        data: {
+                            list: thisList,
+                            goalSum: @Json.Serialize(Model.GoalSum)
+                        },
+                        success: function (djson) {
+                            if (djson) {
+
+                                var data = google.visualization.arrayToDataTable(djson);
+                                var chart = new google.visualization.ComboChart(document.getElementById('line_chart_div'));
+
+                                var options = {
+                                    width: '50%',
+                                    height: '50%',
+                                    legend: { position: 'top', maxLines: 3 },
+                                    //bar: { groupWidth: '75%' },
+                                    annotations: {
+                                        textStyle: {
+                                            color: 'black',
+                                        }
+                                    },
+                                    seriesType: 'area',
+                                    isStacked: true,
+                                    series: { 1: { type: 'line' } },
+                                    colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6']
+
+                                };
+                                chart.draw(data, options);
+                            }
+                        },
+                        error: function () {
+                            alert("Ошибка загрузки данных. Повторите пожалуйста");
+                        }
+                    });
+                };
+
+            };
+            $(document).ready(function () {
+                $(window).resize(function () {
+                    myCallback();
+                });
+            });
+        });
+    });
+</script>
+
+
+@*<script>
+        @{
+            string GetGoalType(){
+                if (hasGoalsAnalyticList) return " ";
+                else if (hasOneGoalAnalyticList) return " ";
+                else  return "";
+            };
+            object GetGoalsList()
+            {
+                if (hasGoalsAnalyticList) return Model.GoalsAnalyticList;
+                else if (hasOneGoalAnalyticList) return Model.OneGoalAnalyticList;
+                else return null;
+            };
+        }
+        $(document).ready(function () {
+            var optionsGoals = {
+                width: '50%',
+                height: '50%',
+                legend: { position: 'top', maxLines: 3 },
+                annotations: {
+                    alwaysOutside: true
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'out'
+                },
+                bar: { groupWidth: '75%' },
+                hAxis: {
+                    minValue: 0
+                },
+
+               colors: ['#e0440e', '#e67e3e', '#e46328', '#f6c386', '#eca06e', '#ffdc96'],
+                isStacked: true
+            };
+
+
+            var optionsOneGoal = {
+                width: '50%',
+                height: '50%',
+                legend: { position: 'top', maxLines: 3 },
+                animation: {
+                    duration: 1000,
+                    easing: 'out'
+                },
+                bar: { groupWidth: '75%' },
+                seriesType: 'bars',
+                isStacked: true,
+                series: { 1: { type: 'line' } },
+                colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6']
+
+            };
+
+
+            $.getScript("https://www.gstatic.com/charts/loader.js", function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.load("visualization", "1", { packages: ["corechart"] });
+                google.charts.setOnLoadCallback(myCallback);
+
+                function myCallback() {
+                    if (@Json.Serialize(hasGoalsAnalyticList)) {
+                          thisList = @Json.Serialize(GetGoalsList());
+                        $.ajax({
+                            url: '@Json.Serialize(@GetGoalType())',
+                            type: 'POST',
+                            data: {
+                                list: thisList
+                            },
+                            success: function (djson) {
+                                if (djson) {
+                                    var data = new google.visualization.arrayToDataTable();
+                                    var chart = new google.visualization.ColumnChart(document.getElementById('line_chart_div'));
+                                    @if (hasOneGoalAnalyticList) {
+                                    }
+
+
+                                    chart.draw(data, options);
+                                            }
+                                        },
+                            error: function () {
+                                            alert("Ошибка загрузки данных. Повторите пожалуйста");
+                                        }
+                                    });
+                    };
+                    if (@Json.Serialize(hasOneGoalAnalyticList)) {
+                                  thisList = @Json.Serialize(Model.OneGoalAnalyticList);
+                        $.ajax({
+
+                            url: '/DataForChartsHelper/GetChartDataForOneGoal',
+                            type: 'POST',
+                            data: {
+                                list: thisList,
+                                goalSum: @Json.Serialize(Model.GoalSum)
+                            },
+                            success: function (djson) {
+                                if (djson) {
+                                    //djson[0].push({ role: 'annotation' });
+                                    //for (var i = 1; i < djson.length; i++) {
+                                    //    var total = 0;
+                                    //    for (var j = 1; j < djson[0].length - 1; j++) {
+                                    //        total += djson[i][djson[i].length - j];
+                                    //    }
+                                    //    djson[i].push(total);
+                                    //}
+                                    var data = google.visualization.arrayToDataTable(djson);
+                                    /*var data = new google.visualization.Arra();*/
+                                    //data.addColumn('string', 'Дата');
+                                    //data.addColumn('number', 'Накопленная сумма');
+                                    //data.addColumn('number', 'Необходимая сумма');
+                                    //$.each(djson, function (index, item) {
+                                    //    let a = item[0];
+                                    //    let b = new Date(item[0]);
+                                    //    let c = Number(item[1]);
+                                    //    data.addRow([item[0], Number(item[1]), Number(item[2]) ]);
+                                    //});
+                                    var chart = new google.visualization.ComboChart(document.getElementById('line_chart_div'));
+
+                                    var options = {
+                                        width: '50%',
+                                        height: '50%',
+                                        legend: { position: 'top', maxLines: 3 },
+                                        animation: {
+                                            duration: 1000,
+                                            easing: 'out'
+                                        },
+                                        bar: { groupWidth: '75%' },
+                                        seriesType: 'bars',
+                                        isStacked: true,
+                                        series: { 1: { type: 'line' } },
+                                        colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6']
+
+                                    };
+                                    chart.draw(data, options);
+                                }
+                            },
+                            error: function () {
+                                alert("Ошибка загрузки данных. Повторите пожалуйста");
+                            }
+                        });
+                    };
+
+                };
+                $(document).ready(function () {
+                    $(window).resize(function () {
+                        myCallback();
+                    });
+                });
+            });
+        });
+    </script>*@
+
+
+

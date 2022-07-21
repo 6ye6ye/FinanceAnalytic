@@ -1,0 +1,78 @@
+﻿@model FinanceAnalytic.Models.Spending
+
+@{
+    ViewData["Title"] = "Подробнее";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+
+        <h4>Расход</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.User)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.User.Login)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Date)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Date)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SpendingCategory)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SpendingCategory.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SpendingSubCategory)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SpendingSubCategory.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Sum)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Sum)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Currency)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Currency.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SumInCurrency)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SumInCurrency)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CurrencyRate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CurrencyRate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ImportanceCategory)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ImportanceCategory.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Comments)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Comments)
+            </dd>
+        </dl>
+
+    <div>
+        <a  class="button_yellow_s" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a> |
+        <a  class="button_yellow_s" asp-action="Index">Вернуться к списку</a>
+    </div>
+</div>

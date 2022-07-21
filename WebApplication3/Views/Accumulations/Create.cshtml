@@ -1,0 +1,73 @@
+﻿@model FinanceAnalytic.Models.ViewModels.AccumulationViewModel
+@{
+    ViewData["Title"] = "Создание";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/CurrencyConverterScript.js"></script>
+    <script type="text/javascript" src="~/js/CurrencySelectedChangedScript.js"></script>
+</head>
+<div class="container">
+    <h4>Накопление</h4>
+    <hr />
+    <form asp-action="Create">
+        <div class="row">
+            <div class="col-md-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Date" class="control-label"></label><span class="required">*</span>
+                    <input asp-for="Date" class="form-control" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="GoalId" class="control-label">Цель</label>
+                    @Html.DropDownListFor(Model => Model.GoalId, Model.Goals as SelectList, "Не выбрано",
+                    htmlAttributes: new { @class = "form-control", id = "GoalId" })
+                    <span asp-validation-for="GoalId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Sum" class="control-label"></label><span class="required">*</span>
+                    <input asp-for="Sum" class="form-control" />
+                    <span asp-validation-for="Sum" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Comments" class="control-label"></label>
+                    <input asp-for="Comments" class="form-control" />
+                    <span asp-validation-for="Comments" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input class="button_yellow_s" type="submit" value="Добавить" />
+                </div>
+                <div>
+                    <a class="button_yellow_s" asp-action="Index">Назад к списку</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="CurrencyId" class="control-label"> Валюта конвертации</label>
+                    @Html.DropDownListFor(Model => Model.CurrencyId, Model.Currencies as SelectList, "Не выбрано",
+                    htmlAttributes: new { @class = "form-control", id = "CurrencyId" })
+                </div>
+                <div class="form-group">
+                    <label asp-for="CurrencyRate" class="control-label"></label>
+                    <input asp-for="CurrencyRate" class="form-control" />
+                    <span asp-validation-for="CurrencyRate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SumInCurrency" class="control-label"></label>
+                    <input asp-for="SumInCurrency" class="form-control" id="SumInCurrency" />
+                    <span asp-validation-for="SumInCurrency" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input id="button_convert" type="button" class="button_yellow_s" value="Конвертировать" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+

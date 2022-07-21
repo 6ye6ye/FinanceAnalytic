@@ -1,0 +1,48 @@
+﻿@model FinanceAnalytic.Models.User
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    
+
+    <h3>Вы уверены что хотите удалить?</h3>
+    <div>
+        <h4>Пользователь</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.Login)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Login)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.Password)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Password)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.RegistrationDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.RegistrationDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.UserRole)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.UserRole.Name)
+            </dd>
+
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Удалить" class="button_yellow_s"/> |
+            <a asp-action="Index" class="button_yellow_s">Вернуться к списку</a>
+        </form>
+    </div>
+</div>

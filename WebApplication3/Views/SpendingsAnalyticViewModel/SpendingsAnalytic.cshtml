@@ -1,0 +1,371 @@
+﻿@model FinanceAnalytic.Models.ViewModels.SpendingsAnalyticViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var hasSpendingsByCategories = false;
+    if (Model.SpendingsByCategoriesList != null && Model.SpendingsByCategoriesList.Any()) hasSpendingsByCategories = true;
+    var hasPlanedSpendings = false;
+    if (Model.PlanedSpendingsAnalyticList != null && Model.PlanedSpendingsAnalyticList.Any()) hasPlanedSpendings = true;
+}
+
+
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/SpendingSubCategoriesDropDown.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="~/js/DrawSpendingsPieChart.js"></script>
+</head>
+<div class="container">
+    <h1>Анализ расходов</h1>
+    <form method="get">
+        <div class="row row_filters">
+            @Html.DropDownListFor(Model => Model.SelectedSpendingCategory, Model.SpendingCategory as SelectList, "Все категории",
+             htmlAttributes: new { @class = "form-control-sm", Id = "SpendingCategoryId" })
+            @Html.DropDownListFor(Model => Model.SelectedSpendingSubCategory, Model.SpendingSubCategory as SelectList, "Все подкатегории",
+             htmlAttributes: new { @class = "form-control-sm", Id = "SpendingSubCategoryId" })
+            @Html.DropDownListFor(Model => Model.ImportanceCategory, Model.ImportanceCategory as SelectList, "Все категории важности",
+             htmlAttributes: new { @class = "form-control-sm", Id = "ImportanceCategory" })
+
+            <div class="row sub_filters">
+                <label>c:</label>
+
+                <input asp-for="PeriodBegin" class="form-control-sm" id="PeriodBegin" />
+                <span asp-validation-for="PeriodBegin" class="text-danger"></span>
+                <label>по:</label>
+                <input asp-for="PeriodEnd" class="form-control-sm" id="PeriodEnd" />
+                <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+            </div>
+
+            <div class="row sub_filters">
+                <label class="control-label">Групировка по: </label>
+                @Html.DropDownListFor(Model => Model.SelectedPeriodTypes, Model.PeriodTypes as SelectList, null, htmlAttributes: new { @class = "form-control-sm", Id = "PeriodTypes" })
+            </div>
+
+            <input type="submit" value="Поиск" class="button_yellow_s" />
+        </div>
+    </form>
+
+
+    @if (hasSpendingsByCategories)
+    {
+        <h3>Расходы c @Model.PeriodBegin.ToShortDateString() по @Model.PeriodEnd.ToShortDateString()</h3>
+
+        <div class="row">
+            @if (Model.HasAnyImpCategory)
+            {
+                <div id="chart_spendImp_div" class="col-md-6 chart"></div>
+            }
+            <div id="chart_spendCat_div" class="col-md-6 chart"></div>
+        </div>
+
+        <div id="column_chart_div" class="chart"></div>
+
+
+        <div>
+            <h1>Расходы</h1>
+            <button id="button_export" class="button_yellow_s" onclick="exportToExcelSpendings()">Экспорт в EXCEL</button>
+        </div>
+
+
+
+        <table class="table100 ">
+
+            <thead>
+                <tr class="row100 head">
+                    <th>
+                        Дата
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(Model => Model.SpendingCategory)
+                    </th>
+                    <th>
+                        Сумма
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.SpendingsByCategoriesList)
+                {
+
+                    <tr class="row100 head">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DateString)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CategoryName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Sum)
+                        </td>
+                    </tr>
+                }
+                <tr class="row100">
+                    <td>
+                    </td>
+                    <td>
+                        Сумма итого:
+                    </td>
+                    <td>
+                        @Model.SpendingsByCategoriesList.Sum(c => c.Sum)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    }
+    else
+    {
+        <div>
+            <h2>За данный период по данному запросу расходы отсутствуют</h2>
+        </div>
+    }
+
+    @if (hasPlanedSpendings)
+    {
+        <div class="justify-content-between">
+            <h1>Планируемые расходы</h1>
+            <button id="button_export" class="button_yellow_s" onclick="exportToExcelPlanedSpendings()">Экспорт в EXCEL</button>
+        </div>
+    
+
+            <table class="table100 ">
+
+                <thead>
+                    <tr class="row100 head">
+                        <th>
+                            @Html.DisplayNameFor(Model => Model.PeriodBegin)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(Model => Model.PeriodEnd)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(Model => Model.SpendingCategory)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(Model => Model.SpendingSubCategory)
+                        </th>
+                        <th>
+                            Сумма планируемая
+                        </th>
+                        <th>
+                            Сумма потраченная
+                        </th>
+                        <th>
+                            Остаток
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PlanedSpendingsAnalyticList)
+                    {
+                    <tr class="row100">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PeriodBegin)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PeriodEnd)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SpendingCategory.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SpendingSubCategory.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SumPlaning)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Sum)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Different)
+                        </td>
+                    </tr>
+                    }
+                    <tr class="row100">
+                        @{
+                            var sum = @Model.PlanedSpendingsAnalyticList.Sum(c => c.Sum);
+                            var sumPlaning = @Model.PlanedSpendingsAnalyticList.Sum(c => c.SumPlaning);
+                        }
+                        <td>
+                        </td>
+
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            Итого:
+                        </td>
+                        <td>
+                            @sum
+                        </td>
+                        <td>
+                            @sumPlaning
+                        </td>
+                        <td>
+               
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    }
+</div>
+<script>
+    function startLoader() {
+        $("#button_export").text('Загрузка...');
+        $("#button_export").attr('disabled',true);
+    }
+
+    function stopLoader() {
+        $("#button_export").text('Экспорт в EXCEL');
+        $("#button_export").attr('disabled', false);
+    }
+
+   function exportToExcelSpendings() {
+       list =@Json.Serialize(Model.SpendingsByCategoriesList);
+       PeriodBegin =@Json.Serialize(Model.PeriodBegin.ToLongDateString());
+       PeriodEnd=@Json.Serialize(Model.PeriodEnd.ToLongDateString());
+       $.ajax({
+           url: '/ConverterToExcelHelper/ConvertToExcelSpendingsAnalytic',
+           type: 'POST',
+           beforeSend: function () {
+           startLoader();
+           },
+           xhr: function () {
+               var xhr = new XMLHttpRequest();
+               xhr.onreadystatechange = function () {
+                   if (xhr.readyState == 2) {
+                       if (xhr.status == 200) {
+                           xhr.responseType = "blob";
+                       } else {
+                           xhr.responseType = "text";
+                       }
+                   }
+               };
+               return xhr;
+           },
+           data: {
+               groupedList: list,
+               PeriodBegin,
+               PeriodEnd
+           },
+           success: function (response) {
+               var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+               var url = window.URL.createObjectURL(blob);
+               var a = document.createElement("a");
+               a.href = url;
+               a.download = "@User.Identity.Name.ToString()" + "_Spendings_" + "@DateTime.Now.ToShortDateString()" + ".xlsx";
+               document.body.appendChild(a);
+               a.click();
+           },
+              complete: function () {
+                    stopLoader();
+                    }
+                });
+       return false;
+    }
+    function exportToExcelPlanedSpendings() {
+       list =@Json.Serialize(Model.PlanedSpendingsAnalyticList);
+       PeriodBegin =@Json.Serialize(Model.PeriodBegin.ToLongDateString());
+       PeriodEnd=@Json.Serialize(Model.PeriodEnd.ToLongDateString());
+       $.ajax({
+           url: '/ConverterToExcelHelper/ConvertToExcelPlanedSpendingsAnalytic',
+           type: 'POST',
+           beforeSend: function () {
+           startLoader();
+           },
+           xhr: function () {
+               var xhr = new XMLHttpRequest();
+               xhr.onreadystatechange = function () {
+                   if (xhr.readyState == 2) {
+                       if (xhr.status == 200) {
+                           xhr.responseType = "blob";
+                       } else {
+                           xhr.responseType = "text";
+                       }
+                   }
+               };
+               return xhr;
+           },
+           data: {
+               groupedList: list,
+               PeriodBegin,
+               PeriodEnd
+           },
+           success: function (response) {
+               var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+               var url = window.URL.createObjectURL(blob);
+               var a = document.createElement("a");
+               a.href = url;
+               a.download = "@User.Identity.Name.ToString()" + "_PlanedSpendings_" + "@DateTime.Now.ToShortDateString()" + ".xlsx";
+               document.body.appendChild(a);
+               a.click();
+           },
+              complete: function () {
+                    stopLoader();
+                    }
+                });
+       return false;
+    }
+</script>
+<script>
+    list = @Json.Serialize(Model.SpendingsByCategoriesList);
+    $.getScript("https://www.gstatic.com/charts/loader.js", function () {
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.load("visualization", "1", { packages: ["corechart"] });
+    google.charts.setOnLoadCallback(myCallback);
+
+            function myCallback() {
+
+                $.ajax({
+                    url: '/DataForChartsHelper/GetColumnChartDataSpendings',
+                    type: 'POST',
+                    data: {
+                        groupedList: list
+                    },
+                    success: function (djson) {
+                        if (djson) {
+                            djson[0].push({ role: 'annotation' });
+                            for (var i = 1; i < djson.length; i++) {
+                                var total = 0;
+                                for (var j = 1; j < djson[0].length - 1; j++) {
+                                    total += djson[i][djson[i].length - j];
+                                }
+                                djson[i].push(total);
+                            }
+                            var data = google.visualization.arrayToDataTable(djson);
+                            var chart = new google.visualization.ColumnChart(document.getElementById('column_chart_div'));
+                            var options = {
+                                width: '50%',
+                                height: '50%',
+                                legend: { position: 'top', maxLines: 3 },
+                                annotations: {
+                                    textStyle: {
+                                        color: 'black',
+                                    }
+                                },
+                                auraColor: '#383838',
+                                bar: { groupWidth: '75%' },
+                                colors: ['#e0440e', '#e67e3e', '#e46328', '#f6c386', '#eca06e', '#ffdc96'],
+                                isStacked: true,
+                            };
+                            chart.draw(data, options);
+                        }
+                    },
+                    error: function () {
+                        alert("Ошибка загрузки данных. Повторите пожалуйста");
+                    }
+                });
+            };
+            $(document).ready(function () {
+                $(window).resize(function () {
+                    myCallback();
+                });
+            });
+    });
+
+</script>

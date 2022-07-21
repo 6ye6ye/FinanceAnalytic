@@ -1,0 +1,41 @@
+﻿@model IEnumerable<FinanceAnalytic.Models.UserRole>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <h1>Index</h1>
+
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(Model => Model.Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">
+                        <img src="~/images/icon_edit.png" />
+                    </a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">
+                        <img src="~/images/icon_delete.png" />
+                    </a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

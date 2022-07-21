@@ -1,0 +1,41 @@
+﻿@model FinanceAnalytic.Models.User
+
+@{
+    ViewData["Title"] = "Создание";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <h4>Пользователь</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Login" class="control-label"></label><span class="required">*</span>
+                    <input asp-for="Login" class="form-control" />
+                    <span asp-validation-for="Login" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label"></label><span class="required">*</span>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="UserRoleId" class="control-label"></label><span class="required">*</span>
+                    <select asp-for="UserRoleId" class="form-control" asp-items="ViewBag.UserRoleId"></select>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Создать" class="button_yellow_s" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a class="button_yellow_s" asp-action="Index">Вернуться к списку</a>
+    </div>
+</div>
+

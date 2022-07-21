@@ -1,0 +1,35 @@
+﻿@model FinanceAnalytic.Models.ImportanceCategory
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    
+
+    <h3>Вы уверены что хотите удалить?</h3>
+    <div>
+        <h4>Категория важности</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.NumericEquivalent)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.NumericEquivalent)
+            </dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Удалить" class="button_yellow_s"/> |
+            <a asp-action="Index" class="button_yellow_s">Вернуться к списку</a>
+        </form>
+    </div>
+</div>

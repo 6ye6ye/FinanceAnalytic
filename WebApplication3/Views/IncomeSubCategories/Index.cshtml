@@ -1,0 +1,49 @@
+﻿@model IEnumerable<FinanceAnalytic.Models.IncomeSubCategory>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="list_header row">
+        <h1>Подкатегории доходов</h1>
+        <a class="button_yellow_s" asp-action="Create"> Добавить подкатегорию</a>
+    </div>
+
+  
+        <table class="table100 one_last_column">
+            <thead>
+                <tr class="row100 head">
+                    <th class="column100 column1" data-column="column1">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th class="column100 column2" data-column="column2">
+                        @Html.DisplayNameFor(model => model.IncomeCategory)
+                    </th>
+                    <th class="column100 column3" data-column="column3"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="row100">
+                        <td class="column100 column1" data-column="column1">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td class="column100 column2" data-column="column2">
+                            @Html.DisplayFor(modelItem => item.IncomeCategory.Name)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">
+                                <img src="~/images/icon_edit.png" />
+                            </a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">
+                                <img src="~/images/icon_delete.png" />
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>

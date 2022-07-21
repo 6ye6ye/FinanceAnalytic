@@ -1,0 +1,32 @@
+﻿@model FinanceAnalytic.Models.UserRole
+
+@{
+    ViewData["Title"] = "Редактирование";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    
+
+    <h4>UserRole</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Сохранить" class="button_yellow_s" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index" class="button_yellow_s">Вернуться к списку</a>
+    </div>
+</div>

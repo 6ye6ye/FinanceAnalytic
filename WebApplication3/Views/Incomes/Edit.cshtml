@@ -1,0 +1,81 @@
+﻿@model FinanceAnalytic.Models.ViewModels.IncomesViewModel
+
+@{
+    ViewData["Title"] = "Редактирование";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/CurrencyConverterScript.js"></script>
+    <script type="text/javascript" src="~/js/CurrencySelectedChangedScript.js"></script>
+    <script type="text/javascript" src="~/js/IncomeSubCategoriesDropDown.js"></script>
+
+</head>
+
+<div class="container">
+    <h4>Доход</h4>
+    <hr />
+    <form asp-action="Edit">
+        <div class="row">
+
+            <div class="col-md-4">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Date" class="control-label"></label><span class="required">*</span>
+                    <input asp-for="Date" class="form-control" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IncomeCategoryId" class="control-label"></label><span class="required">*</span>
+                    @Html.DropDownListFor(Model => Model.IncomeCategoryId, Model.IncomeCategories as SelectList, "Не выбранно",
+                    htmlAttributes: new { @class = "form-control", id = "IncomeCategoryId" })
+                </div>
+                <div class="form-group">
+                    <label asp-for="IncomeSubCategoryId" class="control-label"></label>
+                    @Html.DropDownListFor(Model => Model.IncomeSubCategoryId, Model.IncomeSubCategories as SelectList, "Не выбранно",
+                    htmlAttributes: new { @class = "form-control", id = "IncomeSubCategoryId" })
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Sum" class="control-label"></label><span class="required">*</span>
+                    <input asp-for="Sum" class="form-control" />
+                    <span asp-validation-for="Sum" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Comments" class="control-label"></label>
+                    <input asp-for="Comments" class="form-control" />
+                    <span asp-validation-for="Comments" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <input type="submit" value="Изменить" class="button_yellow_s" />|
+                    <a asp-action="Index" class="button_yellow_s">Вернуться к списку</a>
+                </div>
+            </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="CurrencyId" class="control-label"></label>
+                        @Html.DropDownListFor(Model => Model.CurrencyId, Model.Currencies as SelectList, null,
+                        htmlAttributes: new { @class = "form-control", id = "CurrencyId" })
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CurrencyRate" class="control-label"></label>
+                        <input asp-for="CurrencyRate" class="form-control" />
+                        <span asp-validation-for="CurrencyRate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SumInCurrency" class="control-label"></label>
+                        <input asp-for="SumInCurrency" class="form-control" />
+                        <span asp-validation-for="SumInCurrency" class="text-danger"></span>
+                    </div>
+             
+                    <div class="form-group">
+                        <input id="button_convert" type="button" class="button_yellow_s" value="Конвертировать" />
+                    </div>
+
+                </div>
+            </div>
+        
+    </form>
+</div>

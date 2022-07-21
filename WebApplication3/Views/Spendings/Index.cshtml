@@ -1,0 +1,237 @@
+﻿@model FinanceAnalytic.Models.ViewModels.SpendingsListViewModel
+@using System.Text.Json;
+@{
+
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/SpendingSubCategoriesDropDown.js"></script>
+    <script type="text/javascript" src="~/js/ChangeSortParametr.js"></script>
+</head>
+
+<div class="container">
+
+    <div class="list_header row">
+        <h1>Cписок расходов</h1>
+        <div>
+            <button id="button_export" class="button_yellow_s" onclick="exportToExcel()">Экспорт в EXCEL</button>
+            <a class="button_yellow_s" asp-action="Create">Добавить запись</a>
+        </div>
+    </div>
+    <form method="get">
+        <div class="row row_filters">
+
+            @Html.DropDownListFor(Model => Model.SelectedSpendingCategory, Model.SpendingCategory as SelectList, "Все категории",
+            htmlAttributes: new { @class = "form-control-sm", Id = "SpendingCategoryId" })
+            @Html.DropDownListFor(Model => Model.SelectedSpendingSubCategory, Model.SpendingSubCategory as SelectList, "Все подкатегории",
+            htmlAttributes: new { @class = "form-control-sm", Id = "SpendingSubCategoryId" })
+            @Html.DropDownListFor(Model => Model.SelectedImportanceCategory, Model.ImportanceCategory as SelectList, "Все категории важности",
+            htmlAttributes: new { @class = "form-control-sm", Id = "ImportanceCategory" })
+
+            <div class="row sub_filters ">
+                <label>c:</label>
+
+                <input asp-for="PeriodBegin" class="form-control-sm" id="PeriodBegin" />
+                <span asp-validation-for="PeriodBegin" class="text-danger"></span>
+                <label>по:</label>
+                <input asp-for="PeriodEnd" class="form-control-sm" id="PeriodEnd" />
+                <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+            </div>
+            <input type="submit" value="Поиск" class="button_yellow_s" />
+        </div>
+        @Html.HiddenFor(model => model.SortParametr)
+        @{
+            bool hasImportantCat = Model.Spendings.Where(c => c.ImportanceCategory != null).Any();
+            bool hasComments = Model.Spendings.Where(c => c.Comments != null).Any();
+            bool hasCurrency = Model.Spendings.Where(c => c.CurrencyId != null).Any();
+            bool hasSubCategory = Model.Spendings.Where(c => c.SpendingSubCategoryId != null).Any();
+
+            <table class="table100 one_last_column">
+                <thead>
+                    <tr class="row100 head">
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.SpendingParametr.Date)" onclick="ChangeFilter('@ViewBag.SortDateParametr')" />⇅
+                        </th>
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.SpendingParametr.Sum)" onclick="ChangeFilter('@ViewBag.SortSumParametr')" />⇅
+
+                        </th>
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.SpendingParametr.SpendingCategory)" onclick="ChangeFilter('@ViewBag.SortSpendingCategoryParametr')" />⇅
+                        </th>
+                        @if (hasSubCategory)
+                        {
+                            <th>
+                                <input type="submit" value="@Html.DisplayNameFor(Model => Model.SpendingParametr.SpendingSubCategory)" onclick="ChangeFilter('@ViewBag.SortSubCategoryParametr')" />⇅
+                            </th>
+                        }
+                        @if (hasImportantCat)
+                        {
+                            <th>
+                                <input type="submit" value="@Html.DisplayNameFor(Model => Model.SpendingParametr.ImportanceCategory)" onclick="ChangeFilter('@ViewBag.SortImportanceCategoryParametr')" />⇅
+                            </th>
+                        }
+                        @if (hasCurrency)
+                        {
+                            <th>
+                                @Html.DisplayNameFor(Model => Model.SpendingParametr.SumInCurrency)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(Model => Model.SpendingParametr.Currency.Name)
+                            </th>
+                        }
+                        @if (hasComments)
+                        {
+                            <th>
+                                @Html.DisplayNameFor(Model => Model.SpendingParametr.Comments)
+                            </th>
+                        }
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Spendings)
+                    {
+                        <tr class="row100">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Sum)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SpendingCategory.Name)
+                            </td>
+                            @if (hasSubCategory)
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SpendingSubCategory.Name)
+                                </td>
+                            }
+                            @if (hasImportantCat)
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ImportanceCategory.Name)
+                                </td>
+                            }
+                            @if (hasCurrency)
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SumInCurrency)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Currency.Name)
+                                </td>
+                            }
+                            @if (hasComments)
+                            {
+                                <td>
+                                    @if (item.Comments != null)
+                                    {
+                                        <span>+</span>
+                                    }
+
+
+                                </td>
+                            }
+
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id">
+                                    <img src="~/images/icon_edit.png" />
+                                </a> |
+                                <a asp-action="Details" asp-route-id="@item.Id">
+                                    <img src="~/images/icon_details.png" />
+                                </a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id">
+                                    <img src="~/images/icon_delete.png" />
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        }
+    </form>
+</div>
+
+<script>
+    function startLoader() {
+        $("#button_export").text('Загрузка...');
+        $("#button_export").attr('disabled',true);
+    }
+
+    function stopLoader() {
+        $("#button_export").text('Экспорт в EXCEL');
+        $("#button_export").attr('disabled', false);
+    }
+
+    function exportToExcel() {
+
+
+       @{
+
+           var spendingToExcel = Model.Spendings.Select(c => new SpendingToExcel()
+           {
+               Date = c.Date,
+               Comments = c.Comments,
+               CurrencyName = c.Currency != null ? c.Currency.Name : "",
+
+               SumInCurrency = c.SumInCurrency,
+               CurrencyRate = c.CurrencyRate,
+               ImportanceCategoryName =  c.ImportanceCategory != null ? c.ImportanceCategory.Name : "",
+               SpendingCategoryName = c.SpendingCategory != null ? c.SpendingCategory.Name : "",
+               Sum = c.Sum,
+               SpendingSubCategoryName = c.SpendingSubCategory != null ? c.SpendingSubCategory.Name : "",
+
+           }).ToList();
+        }
+       list2 =@Json.Serialize(spendingToExcel);
+
+
+       PeriodBegin =@Json.Serialize(Model.PeriodBegin);
+       PeriodEnd=@Json.Serialize(Model.PeriodEnd);
+       $.ajax({
+               url: '/ConverterToExcelHelper/CompareToExcelSpendingsList',
+           type: 'POST',
+           beforeSend: function () {
+                   startLoader();
+               },
+           xhr: function () {
+                   var xhr = new XMLHttpRequest();
+                   xhr.onreadystatechange = function () {
+                       if (xhr.readyState == 2) {
+                           if (xhr.status == 200) {
+                               xhr.responseType = "blob";
+                           } else {
+                               xhr.responseType = "text";
+                           }
+                       }
+                   };
+                   return xhr;
+               },
+           data: {
+               list: list2,
+               PeriodBegin,
+               PeriodEnd
+           },
+           success: function (response) {
+                   var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                   var url = window.URL.createObjectURL(blob);
+                   var a = document.createElement("a");
+                   a.href = url;
+                   a.download = "@User.Identity.Name.ToString()" + "_Spendings_" + "@DateTime.Now.ToShortDateString()" + ".xlsx";
+                   document.body.appendChild(a);
+                   a.click();
+               },
+              complete: function () {
+                   stopLoader();
+               }
+           });
+       return false;
+    }
+
+</script>

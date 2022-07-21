@@ -1,0 +1,34 @@
+﻿@model FinanceAnalytic.Models.Models.Goal
+
+@{
+    ViewData["Title"] = "Создание";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+
+    <form asp-action="Create">
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Цель</h4>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label><span class="required">*</span>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Sum" class="control-label"></label><span class="required">*</span>
+                    <input asp-for="Sum" class="form-control" />
+                    <span asp-validation-for="Sum" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Добавить" class="button_yellow_s" /> |
+                    <a asp-action="Index" class="button_yellow_s">Вернуться к списку</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+

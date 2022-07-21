@@ -1,0 +1,259 @@
+﻿@{
+    ViewData["Title"] = "Главная-Учет личных финансов";
+
+}
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/homeServise.css">
+</head>
+<body>
+    <div class="header_container">
+
+            <h1 class="main_content display-4 ">Система учета и анализа личных финансов</h1>
+
+            @*<div>
+            @($"Курс доллара: {}")
+        </div>
+        <div>
+            @($"Курс евро: {Model.EUR}")
+        </div>*@
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <h3> Добро пожаловать @User.Identity.Name ! </h3>
+            }
+            else
+            {
+                <h3>Вы еще не вошли в систему ! </h3>
+                <div class="row">
+
+                    <a  asp-area="" asp-controller="Account" asp-action="Register">Регистрация</a> |
+
+                    <a  asp-area="" asp-controller="Account" asp-action="Login">Вход</a>
+                </div>
+            }
+        </div>
+
+        <div class="container-fluid service_container">
+            <h2>Учет</h2>
+            <div class="row">
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="serviceBox">
+                        <div class="service-icon">
+                            <img src="~/images/icon_income.png" />
+                        </div>
+                        <div class="service-content">
+                            <h3 class="title">Доходы</h3>
+                            <p class="description">
+                                Введите учет доходов.
+                            </p>
+                        </div>
+                        <a class="read" asp-controller="Incomes" asp-action="Index">Начать учет доходов</a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="serviceBox">
+                        <div class="service-icon">
+                            <img src="~/images/icon_spending.png" />
+                        </div>
+                        <div class="service-content">
+                            <h3 class="title">Расходы</h3>
+                            <p class="description">
+                                Введите учет расходов.
+                            </p>
+                        </div>
+                        <a class="read" asp-controller="Spendings" asp-action="Index">Начать учет расходов</a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="serviceBox">
+                        <div class="service-icon">
+                            <img src="~/images/icon_planed.png" />
+                        </div>
+                        <div class="service-content">
+                            <h3 class="title">Планирование</h3>
+                            <p class="description">
+                                Планируйте свои расходы.
+                            </p>
+                        </div>
+                        <a class="read" asp-controller="PlanedSpendings" asp-action="Index">Начать планирование расходов</a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="serviceBox">
+                        <div class="service-icon">
+                            <img src="~/images/icon_accumulation.png" />
+                        </div>
+                        <div class="service-content">
+                            <h3 class="title">Накопления</h3>
+                            <p class="description">
+                                Ведите учет накоплений на определенные цели.
+                            </p>
+                        </div>
+                        <a class="read" asp-controller="Accumulations" asp-action="Index">Начать учет накоплений</a>
+                    </div>
+                </div>
+
+            </div><!-- ./row -->
+        </div><!-- ./container -->
+
+    </body>
+    @*<div id="fh5co-services-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3 text-center animate-box ">
+                        <div class="heading-section">
+                            <h2>Our Services</h2>
+                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 text-center animate-box">
+                        <div class="services">
+                            <div class="icon">
+                                <span><i class="icon-mobile"></i></span>
+                            </div>
+                            <h3>Responsive</h3>
+                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center animate-box">
+                        <div class="services">
+                            <div class="icon">
+                                <span><i class="icon-browser"></i></span>
+                            </div>
+                            <h3>Compatible to all browser</h3>
+                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center animate-box">
+                        <div class="services">
+                            <div class="icon">
+                                <span><i class="icon-toolbox"></i></span>
+                            </div>
+                            <h3>Web Design</h3>
+                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+    <!--<main id="main">
+
+        <!-- ======= Services Section ======= -->
+    <!--<section class="services">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up">
+                    <div class="icon-box icon-box-pink">
+                        <div class="icon"><i class="bx bxl-dribbble"></i></div>
+                        <h4 class="title"><a href="">Lorem Ipsum</a></h4>
+                        <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
+                    <div class="icon-box icon-box-cyan">
+                        <div class="icon"><i class="bx bx-file"></i></div>
+                        <h4 class="title"><a href="">Sed ut perspiciatis</a></h4>
+                        <p class="description">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
+                    <div class="icon-box icon-box-green">
+                        <div class="icon"><i class="bx bx-tachometer"></i></div>
+                        <h4 class="title"><a href="">Magni Dolores</a></h4>
+                        <p class="description">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
+                    <div class="icon-box icon-box-blue">
+                        <div class="icon"><i class="bx bx-world"></i></div>
+                        <h4 class="title"><a href="">Nemo Enim</a></h4>
+                        <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>-->
+    <!-- End Services Section -->
+    <!-- ======= Why Us Section ======= -->
+    <!--<section class="why-us section-bg" data-aos="fade-up" date-aos-delay="200">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-6 video-box">
+                    <img src="assets/img/why-us.jpg" class="img-fluid" alt="">
+                    <a href="https://www.youtube.com/watch?v=jDDaplaOz7Q" class="venobox play-btn mb-4" data-vbtype="video" data-autoplay="true"></a>
+                </div>
+
+                <div class="col-lg-6 d-flex flex-column justify-content-center p-5">
+
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-fingerprint"></i></div>
+                        <h4 class="title"><a href="">Lorem Ipsum</a></h4>
+                        <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                    </div>
+
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-gift"></i></div>
+                        <h4 class="title"><a href="">Nemo Enim</a></h4>
+                        <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>-->
+    <!-- End Why Us Section -->
+
+<!--@*<script>
+        $(document).ready(function () {
+
+                $.ajax({
+
+                    type: 'POST',
+                    url: '/Users/HasSpendings',
+                    dataType: 'json',
+                    async: false
+                    /* что нужно сделать до отправки запрса */
+                }).done(function (data) {
+                    /* Преобразуем результат, пришедший от обработчика - преобразуем json-строку обратно в массив */
+                    var ds = jQuery.parseJSON(data);
+                    hasData = ds;
+                });
+
+        });
+
+            </scri
+        <!--@*<script>
+            $(document).ready(function () {
+
+                    $.ajax({
+
+                        type: 'POST',
+                        url: '/Users/HasSpendings',
+                        dataType: 'json',
+                        async: false
+                        /* что нужно сделать до отправки запрса */
+                    }).done(function (data) {
+                        /* Преобразуем результат, пришедший от обработчика - преобразуем json-строку обратно в массив */
+                        var ds = jQuery.parseJSON(data);
+                        hasData = ds;
+                    });
+
+            });
+
+                </script>*@-->

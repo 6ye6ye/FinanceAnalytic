@@ -1,0 +1,200 @@
+﻿@model FinanceAnalytic.Models.ViewModels.IncomeListViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    bool hasComments = Model.Incomes.Where(c => c.Comments != null).Any();
+    bool hasCurrency = Model.Incomes.Where(c => c.Currency != null).Any();
+    bool hasIcomeSubCategoty = Model.Incomes.Where(c => c.IncomeSubCategoryId != null).Any();
+}
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/IncomeSubCategoriesDropDown.js"></script>
+    <script type="text/javascript" src="~/js/ChangeSortParametr.js"></script>
+</head>
+
+<div class="container">
+    <div class="list_header row">
+        <h1>Cписок доходов</h1>
+        <div>
+            <button id="button_export" class="button_yellow_s" onclick="exportToExcel()">Экспорт в EXCEL</button>
+            <a class="button_yellow_s" asp-action="Create">Добавить запись</a>
+        </div>
+    </div>
+    <form method="get">
+        <div class="row row_filters">
+            @*<label class="control-label">Категория расходов: </label>*@
+            @Html.DropDownListFor(Model => Model.SelectedIncomeCategory, Model.IncomeCategory as SelectList, "Все категории",
+                        htmlAttributes: new { @class = "form-control-sm", Id = "SelectedIncomeCategory" })
+
+            @*<label class="control-label">ПодКатегория расходов: </label>*@
+            @Html.DropDownListFor(Model => Model.SelectedIncomeSubCategory, Model.IncomeSubCategory as SelectList, "Все подкатегории",
+                        htmlAttributes: new { @class = "form-control-sm", Id = "SelectedIncomeSubCategory" })
+
+
+            <div class="row sub_filters">
+                <label>c:</label>
+                <input asp-for="PeriodBegin" class="form-control-sm" id="PeriodBegin" />
+                <span asp-validation-for="PeriodBegin" class="text-danger"></span>
+                <label>по:</label>
+                <input asp-for="PeriodEnd" class="form-control-sm" id="PeriodEnd" />
+                <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+            </div>
+            <input type="submit" value="Поиск" class="button_yellow_s" />
+        </div>
+
+
+        @Html.HiddenFor(model => model.SortParametr)
+        <table class="table100 one_last_column">
+            <thead>
+                <tr class="row100 head">
+                    <th>
+                        <input type="submit" value="@Html.DisplayNameFor(Model => Model.IncomeParametr.Date)" onclick="ChangeFilter('@ViewBag.SortDateParametr')" />⇅
+
+                    </th>
+                    <th>
+                        <input type="submit" value="@Html.DisplayNameFor(Model => Model.IncomeParametr.Sum)" onclick="ChangeFilter('@ViewBag.SortSumParametr')" />⇅
+
+                    </th>
+                    <th>
+                        <input type="submit" value="@Html.DisplayNameFor(Model => Model.IncomeParametr.IncomeCategory)" onclick="ChangeFilter('@ViewBag.SortIncomeCategoryParametr')" />⇅
+
+                    </th>
+                    @if (hasIcomeSubCategoty)
+                    {
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.IncomeParametr.IncomeSubCategory)" onclick="ChangeFilter('@ViewBag.SortIncomeSubCategoryParametr')" />⇅
+
+                        </th>
+                    }
+
+                    @if (hasCurrency)
+                    {
+                        <th>
+                            Валюта
+                        </th>
+                        <th>
+                            Сумма в валюте
+                        </th>
+                    }
+                    @if (hasComments)
+                    {
+                        <th>
+                            Коментарии
+                        </th>
+                    }
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Incomes)
+                {
+                    <tr class="row100">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Date)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Sum)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IncomeCategory.Name)
+                        </td>
+                        @if (hasIcomeSubCategoty)
+                        {
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IncomeSubCategory.Name)
+                            </td>
+                        }
+                        @if (hasCurrency)
+                        {
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Currency.Name)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SumInCurrency)
+                            </td>
+                        }
+                        @if (hasComments)
+                        {
+                            <td>
+                                +
+                            </td>
+                        }
+
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">
+                                <img src="~/images/icon_edit.png" />
+                            </a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">
+                                <img src="~/images/icon_details.png" />
+                            </a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">
+                                <img src="~/images/icon_delete.png" />
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+</div>
+<script>
+    function startLoader() {
+        $("#button_export").text('Загрузка...');
+        $("#button_export").attr('disabled',true);
+    }
+
+    function stopLoader() {
+        $("#button_export").text('Экспорт в EXCEL');
+        $("#button_export").attr('disabled', false);
+    }
+
+   function exportToExcel() {
+       list =@Json.Serialize(Model.Incomes);
+       PeriodBegin =@Json.Serialize(Model.PeriodBegin);
+       PeriodEnd=@Json.Serialize(Model.PeriodEnd);
+       $.ajax({
+           url: '/ConverterToExcelHelper/CompareToExcelIncomesList',
+           type: 'POST',
+           beforeSend: function () {
+           startLoader();
+           },
+           xhr: function () {
+               var xhr = new XMLHttpRequest();
+               xhr.onreadystatechange = function () {
+                   if (xhr.readyState == 2) {
+                       if (xhr.status == 200) {
+                           xhr.responseType = "blob";
+                       } else {
+                           xhr.responseType = "text";
+                       }
+                   }
+               };
+               return xhr;
+           },
+           data: {
+               list,
+               PeriodBegin,
+               PeriodEnd
+           },
+           success: function (response) {
+               var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+               var url = window.URL.createObjectURL(blob);
+               var a = document.createElement("a");
+               a.href = url;
+               a.download = "@User.Identity.Name.ToString()" + "_Incomes_" + "@DateTime.Now.ToShortDateString()" + ".xlsx";
+               document.body.appendChild(a);
+               a.click();
+           },
+              complete: function () {
+                    stopLoader();
+                    }
+                });
+       return false;
+    }
+
+</script>

@@ -1,0 +1,305 @@
+﻿@model FinanceAnalytic.Models.ViewModels.IncomesAnalyticViewModel
+
+@{
+    string dateNow = DateTime.Now.Date.ToString();
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/IncomeSubCategoriesDropDown.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="~/js/PieChartForIncomesAnalytic.js"></script>
+
+</head>
+
+<div class="container">
+    <h1>Анализ доходов</h1>
+    <form method="get">
+        <div class="row row_filters justify-content-between">
+            <div class="form-group">
+                @Html.DropDownListFor(Model => Model.SelectedIncomeCategory, Model.IncomeCategory as SelectList, "Все категории",
+                 htmlAttributes: new { @class = "form-control-sm", Id = "IncomeCategoryId" })
+            </div>
+
+            <div class="form-group">
+                @Html.DropDownListFor(Model => Model.SelectedIncomeSubCategory, Model.IncomeSubCategory as SelectList, "Все подкатегории",
+                 htmlAttributes: new { @class = "form-control-sm", Id = "IncomeSubCategoryId" })
+            </div>
+            <div class="row ">
+                <label>c:</label>
+                <div class="form-group">
+                    <input asp-for="PeriodBegin" class="form-control-sm" id="PeriodBegin" />
+                    <span asp-validation-for="PeriodBegin" class="text-danger"></span>
+                </div>
+                <label>по:</label>
+                <div class="form-group">
+                    <input asp-for="PeriodEnd" class="form-control-sm" id="PeriodEnd" />
+                    <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row ">
+                <div class="form-group">
+                    <label class="control-label">Групировка по: </label>
+                    @Html.DropDownListFor(Model => Model.SelectedPeriodTypes, Model.PeriodTypes as SelectList, null, htmlAttributes: new { @class = "form-control-sm", Id = "PeriodTypes" })
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Поиск" class="button_yellow_s" />
+            </div>
+        </div>
+    </form>
+
+    @if (Model.IncomesByCategoriesList.Any() != false)
+    {
+        <div class="form-row">
+
+            <h2>Доходы по категориям с @Model.PeriodBegin.ToShortDateString() по @Model.PeriodEnd.ToShortDateString()</h2>
+            <div id="income_byCat_chart_div" class="chart"></div>
+        </div>
+        <div class="row">
+            <div id="income_column_chart_div" class="chart"></div>
+        </div>
+        <div>
+            <div class="justify-content-between">
+                <h1>Доходы</h1>
+                <button id="button_export" onclick="exportToExcel()" class="button_yellow_s">Экспорт в EXCEL</button>
+            </div>
+        </div>
+
+        <div>
+
+            @{
+                var sum = Model.IncomesByCategoriesList.Sum(c => c.Sum);
+
+            }
+            <table class="table100">
+                <thead>
+                    <tr class="row100 head">
+                        <th>
+                            Дата
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(Model => Model.IncomeCategory)
+                        </th>
+                        <th>
+                            Сумма
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.IncomesByCategoriesList)
+                    {
+                        <tr class="row100">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DateString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CategoryName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Sum)
+                            </td>
+                        </tr>
+                    }
+                    <tr class="row100">
+                        <td>
+                        </td>
+                        <td>
+                            Итого:
+                        </td>
+                        <td>
+                            @sum
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div>
+            <h2>За данный период по данному запросу доходы отсутствуют</h2>
+        </div>
+    }
+</div>
+
+    <script>
+   // $(document).ready(function () {
+        list = @Json.Serialize(Model.IncomesByCategoriesList);
+        $.getScript("https://www.gstatic.com/charts/loader.js", function () {
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.load("visualization", "1", { packages: ["corechart"] });
+            google.charts.setOnLoadCallback(myCallback);
+
+            function myCallback() {
+
+                $.ajax({
+                    url: '/DataForChartsHelper/GetColumnChartDataIncomes',
+                    type: 'POST',
+                    data: {
+                        list: list
+                    },
+                    success: function (djson) {
+                        if (djson) {
+                            djson[0].push({ role: 'annotation' });
+                            for (var i = 1; i < djson.length; i++) {
+                                var total = 0;
+                                for (var j = 1; j < djson[0].length - 1; j++) {
+                                    total += djson[i][djson[i].length - j];
+                                }
+                                djson[i].push(total);
+                            }
+                            var data = google.visualization.arrayToDataTable(djson);
+
+                            var myTitle = "Доходы по категориям c " + @Json.Serialize(Model.PeriodBegin.ToShortDateString()) + " по " + @Json.Serialize(Model.PeriodEnd.ToShortDateString());
+                            var chart = new google.visualization.ColumnChart(document.getElementById('income_column_chart_div'));
+                            var options = {
+
+                                title: myTitle,
+                                width: '50%',
+                                height: '50%',
+                                legend: { position: 'top', maxLines: 3 },
+                                annotations: {
+                                    textStyle: {
+                                        color: 'black',
+                                    }
+                                },
+                                bar: { groupWidth: '75%' },
+
+                                colors: ['#e0440e', '#e67e3e', '#e46328', '#f6c386', '#eca06e', '#ffdc96'],
+                             
+                                isStacked: true,
+                            };
+                            chart.draw(data, options);
+                        }
+                    },
+                    error: function () {
+                        alert("Ошибка загрузки данных. Повторите пожалуйста");
+                    }
+                });
+            };
+            $(document).ready(function () {
+                $(window).resize(function () {
+                    myCallback();
+                });
+            });
+    });
+
+    </script>
+
+    <script>
+    function startLoader() {
+        $("#button_export").text('Загрузка...');
+        $("#button_export").attr('disabled',true);
+    }
+
+    function stopLoader() {
+        $("#button_export").text('Экспорт в EXCEL');
+        $("#button_export").attr('disabled', false);
+    }
+
+   function exportToExcel() {
+       list =@Json.Serialize(Model.IncomesByCategoriesList);
+       PeriodBegin =@Json.Serialize(Model.PeriodBegin);
+       PeriodEnd=@Json.Serialize(Model.PeriodEnd);
+       $.ajax({
+           url: '/ConverterToExcelHelper/ConvertToExcelIncomesAnalytic',
+           type: 'POST',
+           beforeSend: function () {
+           startLoader();
+           },
+           xhr: function () {
+               var xhr = new XMLHttpRequest();
+               xhr.onreadystatechange = function () {
+                   if (xhr.readyState == 2) {
+                       if (xhr.status == 200) {
+                           xhr.responseType = "blob";
+                       } else {
+                           xhr.responseType = "text";
+                       }
+                   }
+               };
+               return xhr;
+           },
+           data: {
+               groupedList: list,
+               PeriodBegin,
+               PeriodEnd
+           },
+           success: function (response) {
+               var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+               var url = window.URL.createObjectURL(blob);
+               var a = document.createElement("a");
+               a.href = url;
+               a.download = "@User.Identity.Name.ToString()" + "_IncomesA_" + "@DateTime.Now.ToShortDateString()" + ".xlsx";
+               document.body.appendChild(a);
+               a.click();
+           },
+              complete: function () {
+                    stopLoader();
+                    }
+                });
+       return false;
+    }
+
+    </script>
+
+    <script>
+    $.getScript("https://www.gstatic.com/charts/loader.js", function () {
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(myCallback2);
+        list =@Json.Serialize(Model.IncomesByCategoriesList);
+        function myCallback2() {
+            $.ajax({
+                url: '/DataForChartsHelper/GetPieChartDataIncomesCat',
+                type: 'POST',
+                data: {
+                   // PeriodBegin: $("#PeriodBegin").val(),
+                   // PeriodEnd: $("#PeriodEnd").val(),
+                    list: list
+                },
+                success: function (chartsdata) {
+                    if (chartsdata) {
+                        var data = new google.visualization.DataTable();
+                        data.addColumn('string', 'Категорияя доходов');
+                        data.addColumn('number', 'Сумма');
+                        $(chartsdata).each(function (x, y) {
+                            data.addRow([y.name, y.cost]);
+                        });
+                        var chart = new google.visualization.PieChart(document.getElementById('income_byCat_chart_div'));
+                        var options = {
+
+
+                            width: '50%',
+                            height: '50%',
+                            legend: { position: 'top', maxLines: 3 },
+                            animation: {
+                                duration: 1000,
+                                easing: 'out'
+                            },
+                            bar: { groupWidth: '75%' },
+      
+                           colors: ['#e0440e', '#e67e3e', '#e46328', '#f6c386', '#eca06e', '#ffdc96'],
+                            isStacked: true,
+                        };
+                        chart.draw(data, options);
+                    }
+                },
+                error: function () {
+                    alert("Ошибка загрузки данных. Повторите пожалуйста");
+                }
+            });
+        };
+        $(document).ready(function () {
+            $(window).resize(function () {
+                myCallback2();
+            });
+        });
+    });
+
+    </script>

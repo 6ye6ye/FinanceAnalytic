@@ -1,0 +1,37 @@
+﻿[ Ver3 ]*/
+.table100.ver3 tbody tr {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.table100.ver3 td {
+    font-family: Montserrat-Regular;
+    font-size: 14px;
+    color: #808080;
+    line-height: 1.4;
+}
+
+.table100.ver3 th {
+    font-family: Montserrat-Medium;
+    font-size: 12px;
+    color: #fff;
+    line-height: 1.4;
+    text-transform: uppercase;
+    background-color: #6c7ae0;
+}
+
+.table100.ver3 .row100:hover td {
+    background-color: #fcebf5;
+}
+
+.table100.ver3 .hov-column-ver3 {
+    background-color: #fcebf5;
+}
+
+.table100.ver3 .hov-column-head-ver3 {
+    background-color: #7b88e3 !important;
+}
+
+.table100.ver3 .row100 td:hover {
+    background-color: #e03e9c;
+    color: #fff;
+}

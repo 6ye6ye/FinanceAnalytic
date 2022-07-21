@@ -1,0 +1,462 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Rajdhani&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,200;0,300;1,100&family=Rajdhani&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap');
+/*@font-face {
+    font-family: Montserrat-Regular;
+    src: url('../fonts/montserrat/Montserrat-Regular.ttf');
+}*/
+
+@font-face {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-family: 'Comfortaa', cursive;
+}
+
+body {
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+header {
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+}
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    min-height: 82vh;
+    margin-bottom: 0;
+    box-shadow: -2px 0px 35px 0px rgba(0, 0, 0, 0.2);
+    margin-bottom: 70px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+a {
+    text-decoration: none !important;
+    color:#60606b;
+}
+    a:hover {
+        transition: .3s ease-in-out;
+        color: white;
+    }
+
+.link {
+    text-decoration: none;
+}
+
+.chart {
+    width: 100%;
+    min-height: 450px;
+}
+
+.color_white {
+    color: white;
+}
+body {
+
+    color: #2d394b;
+    margin-bottom: 60px;
+    background-image: url("/images/bg1.jpg");
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+
+}
+
+.list_header {
+    justify-content:space-between;
+
+    align-content:center;
+}
+.row_filters {
+    align-content: center;
+    align-items: center;
+    padding-bottom:10px;
+}
+.sub_filters {
+    align-content: center;
+    align-items: center;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin:0;
+}
+
+
+.button_yellow_l {
+    background: #ffbb00;
+    padding: 14px 32px;
+    color: #33354b;
+    font-size: 14px;
+    display: inline-block;
+    border: 2px solid #ffbb00;
+    height: 45px;
+    transition: .5s;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+    animation: 1s 2s fadeInRight both;
+}
+
+.button_yellow_s {
+    background: #ffbb00;
+    padding: 5px 10px;
+    color: #33354b;
+    font-size: 14px;
+    display: inline-block;
+    border: 2px solid #ffbb00;
+    height: 35px;
+    transition: .5s;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+    animation: 1s 2s fadeInRight both;
+}
+
+.navbar {
+    background-color: #4e565e;
+    color: white;
+}
+
+.row {
+    margin: 0 !important;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; 
+}
+
+footer {
+    text-align: center;
+    z-index: 100;
+    display: block;
+    box-shadow: -2px 0px 25px 0px rgba(76, 82, 87, 0.2);
+    background: linear-gradient(180deg, rgb(228 228 228) 100%, rgb(174 174 174) 0%);
+}
+
+    footer label {
+        color: #9c9c9c;
+    }
+
+
+/*//////////////////////////////////////////////////////////////////
+[ Table ]*/
+
+
+th, td {
+    font-weight: unset;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.column100 {
+    width: 130px;
+    margin-left: 10px;
+}
+
+.row100 head {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.row100 td {
+    border: 1px solid #bcc0c4;
+}
+.table100 {
+    width: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0px 35px 0px rgba(0, 0, 0, 0.2);
+}
+
+
+.table100 tbody tr {
+    border-bottom: 1px solid #bcc0c4;
+}
+
+.table100 td {
+    color: #33354b;
+    line-height: 1.4;
+    
+}
+
+.two_last td:nth-last-child(-n+2) {
+    color: #fff;
+    background-color: #60606b;
+}
+/*.table100 tr:last-child {
+    color: #fff !important;
+    background-color: #60606b !important;
+}*/
+
+.one_last_column td:last-child {
+    color: #fff;
+    display:flex;
+    width:100%;
+
+    justify-content:center;
+    background-color: #60606b;
+}
+
+
+.one_last_column .row100:hover td:last-child {
+    background-color: #60606b;
+}
+
+row100:hover td {
+    color: #fff;
+    background-color: #60606b;
+}
+
+
+.table100 td:last-child a {
+    color: #e5e5e5;
+}
+
+    .table100 td:last-child a:hover {
+        color: #fadb89;
+    }
+.table100 th input {
+    outline: none;
+    border: none;
+    color: #fff;
+    background-color: #8c8c97;
+}
+    .table100 th input:hover {
+        color: #fadb89;
+        transition: .3s ease-in-out;
+    }
+.table100 th {
+    color: #fff;
+    background-color: #8c8c97;
+}
+
+    .table100 th a {
+        color: white;
+        line-height: 1.4;
+    }
+
+        .table100 th a:hover {
+            
+        }
+
+.table100 .row100:hover td {
+    background-color: #fef8d5;
+}
+
+.table100 .hov-column {
+    background-color: #f3f3f3;
+}
+
+
+.table100 .hov-column-ver3:last-child {
+    background-color: #60606b;
+}
+
+.table100 .hov-column-head {
+    background-color: #60606b !important;
+}
+
+.table100 .row100 td:hover {
+    background-color: #fcdb7f;
+  
+}
+
+
+
+
+
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+
+header {
+    text-align: center;
+}
+
+    header a {
+        text-decoration: none;
+        outline: none;
+        display: block;
+        transition: .3s ease-in-out;
+        /* font-family: 'Montserrat Alternates', sans-serif;*/
+    }
+
+.logo {
+    color: #ffbc1c;
+  
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: 2.5em;
+    padding: 1px 0;
+}
+
+nav {
+    margin: 0 auto;
+}
+
+    nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+.topmenu:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+.topmenu > li {
+    /*    width: 25%;*/
+    float: left;
+    position: relative;
+    font-family: 'Comfortaa', cursive;
+}
+
+    .topmenu > li > a {
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: bold;
+        color: #f9f9f9;
+        padding: 15px 30px;
+    }
+
+.topmenu li a:hover {
+    color: #D5B45B;
+}
+
+.topmenu:after {
+    /*    content: "";
+    display: table;
+    clear: both;*/
+}
+
+.loginmenu > li {
+    position: relative;
+    /* font-family: 'Comfortaa', cursive;*/
+}
+
+    .loginmenu > li > a {
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: bold;
+        color: #404040;
+        /*   padding: 15px 30px;*/
+    }
+
+.loginmenu li a:hover {
+    color: #D5B45B;
+}
+
+.submenu-link:after {
+    content: "🡣";
+    /*font-family: 'Comfortaa', cursive;*/
+    color: inherit;
+    margin-left: 10px;
+}
+
+.submenu {
+    background: #273037;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 5;
+    width: 180px;
+    opacity: 0;
+    transform: scaleY(0);
+    transform-origin: 0 0;
+    transition: .5s ease-in-out;
+}
+
+    .submenu a {
+        color: white;
+        text-align: left;
+        padding: 12px 15px;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .submenu li:last-child a {
+        border-bottom: none;
+    }
+
+.topmenu > li:hover .submenu {
+    opacity: 1;
+    transform: scaleY(1);
+}
+
+.custom-toggler .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(243, 180, 30)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+
+.custom-toggler.navbar-toggler {
+    border-color: #f3b41e;
+}
+
+@media only screen and (max-width: 768) {
+    .topmenu > li {
+        /*    width: 25%;*/
+        float: none;
+/*        display:none;*/
+    }
+}
+
+@media (max-width: 815px) {
+    .table100 th {
+        font-size: 10px;
+    }
+
+    .table100 td {
+        font-size: 10px;
+    }
+}
+/*@media only screen and (max-width: 768) {
+    .table100 th td {*/
+        /*    width: 25%;*/
+        /*font-size:5px;
+    }
+}*/

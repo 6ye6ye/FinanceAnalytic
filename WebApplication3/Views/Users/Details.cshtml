@@ -1,0 +1,45 @@
+﻿@model FinanceAnalytic.Models.User
+
+@{
+    ViewData["Title"] = "Подробнее";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <h1>Пользователь</h1>
+
+    <div>
+
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.Login)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Login)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.Password)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Password)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.RegistrationDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.RegistrationDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.UserRole)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.UserRole.Name)
+            </dd>
+
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="button_yellow_s">Редактировать</a> |
+        <a asp-action="Index" class="button_yellow_s">Вернуться к списку</a>
+    </div>
+</div>

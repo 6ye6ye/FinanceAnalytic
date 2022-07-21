@@ -1,0 +1,197 @@
+﻿@model FinanceAnalytic.Models.ViewModels.PlandeSpendingsListViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/SpendingSubCategoriesDropDown.js"></script>
+    <script type="text/javascript" src="~/js/ChangeSortParametr.js"></script>
+</head>
+<div class="container">
+    <div class="list_header row">
+        <h1>Планируемые расходы</h1>
+        <div>
+            <button id="button_export" class="button_yellow_s" onclick="exportToExcel()">Экспорт в EXCEL</button>
+            <a class="button_yellow_s" asp-action="Create"> Добавить запись</a>
+        </div>
+    </div>
+
+    <form method="get">
+        <div class="row row_filters">
+
+            @*<label class="control-label">Категория расходов: </label>*@
+            @Html.DropDownListFor(Model => Model.SelectedSpendingCategory, Model.SpendingCategory as SelectList, "Все категории",
+                 htmlAttributes: new { @class = "form-control-sm", Id = "SpendingCategoryId" })
+
+            @*<label class="control-label">ПодКатегория расходов: </label>*@
+            @Html.DropDownListFor(Model => Model.SelectedSpendingSubCategory, Model.SpendingSubCategory as SelectList, "Все подкатегории",
+                 htmlAttributes: new { @class = "form-control-sm", Id = "SpendingSubCategoryId" })
+
+            <div class="row sub_filters">
+                <label>c:</label>
+
+                <input asp-for="PeriodBegin" class="form-control-sm" id="PeriodBegin" />
+                <span asp-validation-for="PeriodBegin" class="text-danger"></span>
+                <label>по:</label>
+                <input asp-for="PeriodEnd" class="form-control-sm" id="PeriodEnd" />
+                <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+            </div>
+            <input type="submit" value="Поиск" class="button_yellow_s" />
+        </div>
+        @Html.HiddenFor(model => model.SortParametr)
+        @{
+
+            bool hasComments = Model.PlanedSpendings.Where(c => c.Comments != null).Any();
+            bool hasCurrency = Model.PlanedSpendings.Where(c => c.CurrencyId != null).Any();
+            bool hasSubCategory = Model.PlanedSpendings.Where(c => c.SpendingSubCategoryId != null).Any();
+
+            <table class="table100 one_last_column">
+                <thead>
+                    <tr class="row100 head">
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.PlanedSpendingParametr.PeriodBegin)" onclick="ChangeFilter('@ViewBag.SortPeriodBeginParametr')" />⇅
+                        </th>
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.PlanedSpendingParametr.PeriodEnd)" onclick="ChangeFilter('@ViewBag.SortPeriodEndParametr')" />⇅
+                        </th>
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.PlanedSpendingParametr.Sum)" onclick="ChangeFilter('@ViewBag.SortSumParametr')" />⇅
+                     
+                        </th>
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.PlanedSpendingParametr.SpendingCategory)" onclick="ChangeFilter('@ViewBag.SortSpendingCategoryParametr')" />⇅
+                        </th>
+                        <th>
+                            <input type="submit" value="@Html.DisplayNameFor(Model => Model.PlanedSpendingParametr.SpendingSubCategory)" onclick="ChangeFilter('@ViewBag.SortSubCategoryParametr')" />⇅
+                        </th>
+                        @if (hasCurrency)
+                        {
+                            <th>
+                                @Html.DisplayNameFor(Model => Model.PlanedSpendingParametr.SumInCurrency)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(Model => Model.PlanedSpendingParametr.Currency.Name)
+                            </th>
+                        }
+                        @if (hasComments)
+                        {
+                            <th>
+                                @Html.DisplayNameFor(Model => Model.PlanedSpendingParametr.Comments)
+                            </th>
+                        }
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PlanedSpendings)
+                    {
+                    <tr class="row100">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PeriodBegin)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PeriodEnd)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Sum)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SpendingCategory.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SpendingSubCategory.Name)
+                        </td>
+                        @if (hasCurrency)
+                        {
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SumInCurrency)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Currency.Name)
+                            </td>
+                        }
+                        @if (hasComments)
+                        {
+                            <td>
+                                @if (item.Comments != null)
+                                {
+                                    <span>+</span>
+                                }
+
+
+                            </td>
+                        }
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">
+                                <img src="~/images/icon_edit.png" />
+                            </a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">
+                                <img src="~/images/icon_delete.png" />
+                            </a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+        </form>
+</div>
+
+<script>
+    function startLoader() {
+        $("#button_export").text('Загрузка...');
+        $("#button_export").attr('disabled',true);
+    }
+
+    function stopLoader() {
+        $("#button_export").text('Экспорт в EXCEL');
+        $("#button_export").attr('disabled', false);
+    }
+
+    function exportToExcel() {
+       list =@Json.Serialize(Model.PlanedSpendings);
+       PeriodBegin =@Json.Serialize(Model.PeriodBegin);
+       PeriodEnd=@Json.Serialize(Model.PeriodEnd);
+       $.ajax({
+           url: '/ConverterToExcelHelper/CompareToExcelPlanedSpendingsList',
+           type: 'POST',
+           beforeSend: function () {
+           startLoader();
+           },
+           xhr: function () {
+               var xhr = new XMLHttpRequest();
+               xhr.onreadystatechange = function () {
+                   if (xhr.readyState == 2) {
+                       if (xhr.status == 200) {
+                           xhr.responseType = "blob";
+                       } else {
+                           xhr.responseType = "text";
+                       }
+                   }
+               };
+               return xhr;
+           },
+           data: {
+               list,
+               PeriodBegin,
+               PeriodEnd
+           },
+           success: function (response) {
+               var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+               var url = window.URL.createObjectURL(blob);
+               var a = document.createElement("a");
+               a.href = url;
+               a.download = "@User.Identity.Name.ToString()" + "_PlanedSpendings_" + "@DateTime.Now.ToShortDateString()" + ".xlsx";
+               document.body.appendChild(a);
+               a.click();
+           },
+              complete: function () {
+                    stopLoader();
+                    }
+                });
+       return false;
+    }
+
+</script>

@@ -1,0 +1,66 @@
+﻿@model FinanceAnalytic.Models.ViewModels.SpendingSubCategorieListView
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+
+    <div class="list_header row">
+        <h1>Подкатегории расходов</h1>
+        <a class="button_yellow_s" asp-action="Create"> Добавить подкатегорию</a>
+    </div>
+    <form method="get">
+        <div class="form-inline">
+
+            @Html.DropDownList("SpendingCategory", Model.SpendingCategories as SelectList, "Все категории",
+                        htmlAttributes: new { @class = "form-control" })
+
+            <input type="submit" value="Поиск" class="button_yellow_s" />
+        </div>
+    </form>
+   
+        <table class="table100 one_last_column">
+            <thead>
+                <tr class="row100 head">
+                    <th>
+                        @Html.ActionLink("Наименование", "Index", new { sortBy = ViewBag.SortNameParametr })
+                    </th>
+                    <th>
+                        @Html.ActionLink(@Html.DisplayNameFor(Model => Model.SpendingCategories), "Index", new { sortBy = ViewBag.SortSpendingCategoryParametr })
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.SpendingSubCategory)
+                {
+                    <tr class="row100">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SpendingCategory.Name)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">
+                                <img src="~/images/icon_edit.png" />
+                            </a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">
+                                <img src="~/images/icon_delete.png" />
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    @*@if (User.IsInRole("admin"))
+        {
+            <label class="control-label">Логин: </label>
+            <input name="Login" class="form-control" />
+        }*@
+</div>

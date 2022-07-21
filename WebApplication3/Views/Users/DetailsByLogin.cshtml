@@ -1,0 +1,33 @@
+﻿@model FinanceAnalytic.Models.User
+
+@{
+    ViewData["Title"] = "DetailsByLogin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <h1>Информация аккаунта</h1>
+
+    <div>
+
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.Login)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.Login)
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(Model => Model.UserRole)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(Model => Model.UserRole.Name)
+            </dd>
+
+        </dl>
+    </div>
+    <div>
+        <a asp-action="ChangePassword" asp-controller="Account">Изменить пароль</a>
+    </div>
+</div>

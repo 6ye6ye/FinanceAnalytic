@@ -1,0 +1,105 @@
+﻿
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap');
+
+
+.header_container {
+    padding-top: 220px;
+    padding-bottom: 220px;
+    width: 100%;
+    /*background-image: url(/images/slide_1.jpg);*/
+
+    color: #4e4e4e;
+    text-align: center;
+    padding-left: 0px;
+    margin: auto;
+    text-align: center;
+}
+    .header_container .row {
+        justify-content: center;
+    }
+    .header_container h3 {
+        color: #4e4e4e;
+    }
+
+    .header_container h1 {
+        font-family: 'Fira Sans', sans-serif;
+        font-weight: 300;
+    }
+    .header_container a {
+        text-transform: uppercase;
+        color: #ff4e00;
+        font-size: medium;
+        font-weight: 700;
+    }
+        .header_container a:hover {
+            color: #eba133;
+        }
+    .header_container logo_info {
+    }
+
+
+.service_container {
+    width: 100%;
+    background: rgba(27,27,28,0.4675615212527964) 100%;
+    padding-bottom: 80px;
+    padding-top: 50px;
+    padding-left: 0px;
+}
+.service_container h2{
+    text-align:center;
+    margin-bottom:50px;
+    font-size:40px;
+    text-transform:uppercase;
+    color:white;
+}
+    .serviceBox {
+    border: 1px solid #646464;
+    box-shadow: -2px 0px 35px 0px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding: 40px 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    background: white;
+    transition: all 0.5s ease 0s;
+}
+
+
+.serviceBox .service-content {
+    color: #4e4e4e;
+    line-height: 25px;
+    padding: 0 20px 20px;
+}
+
+.serviceBox .title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.serviceBox .description {
+    font-size: 14px;
+}
+
+    .serviceBox .read {
+        box-shadow: -2px 0px 32px -8px rgba(0, 0, 0, 0.2);
+        display: block;
+        width: 100%;
+        background: #ffbc1c;
+        font-size: 15px;
+        font-weight: 600;
+        color: #4e4e4e;
+        padding: 10px;
+        border-left: 1px solid #eba133;
+        border-right: 1px solid #eba133;
+    }
+
+    .serviceBox:hover .read {
+        border-color: #684f8e;
+        color: white;
+        transition: .3s ease-in-out;
+    }
+
+

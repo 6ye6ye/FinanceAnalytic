@@ -1,0 +1,48 @@
+﻿@model FinanceAnalytic.Models.Accumulation
+
+@{
+    ViewData["Title"] = "Удаление";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <h3>Вы уверены что хотите удалить?</h3>
+    <div>
+        <h4>Накопление</h4>
+        <hr />
+        <dl class="row">
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.User.Login)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Date)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Date)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Goal)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Goal.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Sum)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Sum)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Comments)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Comments)
+            </dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Удалить"class="button_yellow_s" /> |
+            <a asp-action="Index" class="button_yellow_s">Назад к списку</a>
+        </form>
+    </div>
+    </div>

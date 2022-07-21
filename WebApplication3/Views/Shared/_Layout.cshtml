@@ -1,0 +1,143 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Главная"] - Система учета и анализа расходов</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-select/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 d-flex justify-content-around">
+            <a class="logo" asp-area="" asp-controller="Home" asp-action="Index">На главную</a>
+
+            <button class="navbar-toggler custom-toggler " type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex -flex justify-content-around">
+                <ul class="topmenu">
+                    @if (User.IsInRole("admin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Справочники
+                            </a>
+                            <div class="dropdown-menu submenu" aria-labelledby="navbarDropdown">
+                                <a asp-area="" asp-controller="SpendingCategories" asp-action="Index">Категории расходов</a>
+                                <a asp-area="" asp-controller="IncomeCategorys" asp-action="Index">Категории доходов</a>
+                                <a asp-area="" asp-controller="Users" asp-action="Index">Список пользователей</a>
+                            </div>
+                        </li>
+                    
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="AnalyticHelper" asp-action="AllUsersStatistics">Статистика общая</a>
+                        </li>
+                    }
+                    @if (User.Identity.IsAuthenticated)
+                    {
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Расходы
+                            </a>
+                            <div class="dropdown-menu submenu" aria-labelledby="navbarDropdown">
+                                <a asp-area="" asp-controller="Spendings" asp-action="Index">Список расходов</a>
+                                <a asp-area="" asp-controller="SpendingSubCategories" asp-action="Index">Список подкатегорий расходов</a>
+                                <a asp-area="" asp-controller="PlanedSpendings" asp-action="Index">Список планируемых расходов</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Доходы
+                            </a>
+                            <div class="dropdown-menu submenu" aria-labelledby="navbarDropdown">
+                                <a asp-area="" asp-controller="Incomes" asp-action="Index">Список доходов</a>
+                                <a asp-area="" asp-controller="IncomeSubCategories" asp-action="Index">Список подкатегорий доходов</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Накопления
+                            </a>
+                            <div class="dropdown-menu submenu" aria-labelledby="navbarDropdown">
+                                <a asp-area="" asp-controller="Goals" asp-action="Index">Список целей</a>
+                                <a asp-area="" asp-controller="Accumulations" asp-action="Index">Список накоплений</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Анализ
+                            </a>
+                            <div class="dropdown-menu submenu" aria-labelledby="navbarDropdown">
+                                <a asp-area="" asp-controller="SpendingsAnalyticViewModel" asp-action="SpendingsAnalytic">По расходам</a>
+                                <a asp-area="" asp-controller="IncomesAnalyticViewModel" asp-action="IncomesAnalytic">По доходам</a>
+                                <a asp-area="" asp-controller="GeneralAnalyticViewModel" asp-action="GeneralAnalytic">По доходам/расходам</a>
+                                <a asp-area="" asp-controller="GoalsAnalyticViewModel" asp-action="GoalAnalytic">По целям</a>
+
+                            </div>
+                        </li>
+                        @*<li>
+                <a href="" class="submenu-link">Анализ</a>
+                <ul class="submenu">
+                    <li><a asp-area="" asp-controller="SpendingsAnalyticViewModel" asp-action="SpendingsAnalytic">По расходам</a></li>
+                    <li><a asp-area="" asp-controller="IncomesAnalyticViewModel" asp-action="IncomesAnalytic">По доходам</a></li>
+                    <li><a asp-area="" asp-controller="GoalsAnalyticViewModel" asp-action="GoalAnalytic">По целям</a></li>
+                    <li><a asp-area="" asp-controller="GeneralAnalyticViewModel" asp-action="GeneralAnalytic">Общий</a></li>
+                </ul>
+            </li>*@
+
+
+                        @*<li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="AnalyticSpendingsViewModels" asp-action="SpendingsAnalytic">Анализ </a>
+            </li>*@
+                    }
+
+                </ul>
+                <div class=" navbar-nav  justify-content-end flex-grow-1  loginmenu">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a class="nav-item button_yellow_s text-capitalize" asp-area="" asp-controller="Users" asp-action="DetailsByLogin" asp-route-Login="@User.Identity.Name">@User.Identity.Name</a>
+
+                        <a class="nav-item button_yellow_s " asp-area="" asp-controller="Account" asp-action="Logout">Выход</a>
+                    }
+                    else
+                    {
+
+                        <a class="button_yellow_s" asp-area="" asp-controller="Account" asp-action="Register">Регистрация</a>
+
+                        <a class="button_yellow_s" asp-area="" asp-controller="Account" asp-action="Login">Вход</a>
+                    }
+                </div>
+            </div>
+
+        </nav>
+    </header>
+    @*<div class="container">*@
+        <main role="main" >
+            @RenderBody()
+        </main>
+    @*</div>*@
+
+<footer class="border-top footer text-muted">
+    <label> &copy; 2022 - Система учета и анализа личных финансов.  </label>
+    <label> &copy; Гузова Е.И.  </label>
+</footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-select/js/bootstrap-select.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

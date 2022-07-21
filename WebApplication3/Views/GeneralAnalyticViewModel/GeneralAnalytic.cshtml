@@ -1,0 +1,227 @@
+﻿@model FinanceAnalytic.Models.ViewModels.GeneralAnalyticViewModel
+
+@{
+    string dateNow = DateTime.Now.Date.ToString();
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<div class="container">
+    <h1 class="list_header">Анализ доходов/расходов</h1>
+    <form method="get">
+        <div class="row row_filters">
+            <div class="row sub_filters">
+                <label>c:</label>
+
+                <input asp-for="PeriodBegin" class="form-control-sm" id="PeriodBegin" />
+                <span asp-validation-for="PeriodBegin" class="text-danger"></span>
+                <label>по:</label>
+                <input asp-for="PeriodEnd" class="form-control-sm" id="PeriodEnd" />
+                <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+            </div>
+            <div class="row sub_filters">
+                <label class="control-label">Групировка по: </label>
+                @Html.DropDownListFor(Model => Model.SelectedPeriodTypes, Model.PeriodTypes as SelectList, null, htmlAttributes: new { @class = "form-control-sm", Id = "PeriodTypes" })
+            </div>
+            <input type="submit" value="Поиск" class="button_yellow_s" />
+        </div>
+    </form>
+
+
+    @if (Model.CompareList.Any() != false)
+    {
+        <div id="column_chart_div" class="chart"></div>
+    }
+    <div class="form-row">
+        <div class="justify-content-between">
+            <h1>Доходы/расходы</h1>
+            <button id="button_export" class="button_yellow_s" onclick="exportToExcel()">Экспорт в EXCEL</button>
+        </div>
+
+        @if (Model.CompareList.Any())
+        {
+            <table class="table100">
+
+                <thead>
+                    <tr class="row100 head">
+                        <th>
+                            Дата
+                        </th>
+                        <th>
+                            Доходы
+                        </th>
+                        <th>
+                            Расходы
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CompareList)
+                    {
+                        <tr class="row100">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DateString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IncomeSum)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SpendingsSum)
+                            </td>
+                        </tr>
+                    }
+                    @{
+                        var incomesSum = Model.CompareList.Sum(c => c.IncomeSum);
+                        var spendingsSum = Model.CompareList.Sum(c => c.SpendingsSum);
+                        var diffetent = incomesSum - spendingsSum;
+                    }
+                    <tr class="row100">
+                        <td>
+                            Итого:
+                        </td>
+                        <td>
+                            @incomesSum
+                        </td>
+                        <td>
+                            @spendingsSum
+                        </td>
+                    </tr>
+                    <tr class="row100 one_last_column">
+                        <td>
+                            Чистая прибыль:
+                        </td>
+                        <td>
+                            @diffetent
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+<script>
+          ThisModel = @Json.Serialize(Model.CompareList);
+        $.getScript("https://www.gstatic.com/charts/loader.js", function () {
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.load("visualization", "1", { packages: ["corechart"] });
+            google.charts.setOnLoadCallback(myCallback);
+
+            function myCallback() {
+
+                $.ajax({
+                    url: '/DataForChartsHelper/GetColumnChartDataForGeneralAnalytic',
+                    type: 'POST',
+                    data: {
+                        viewModel: ThisModel
+                    },
+                    success: function (djson) {
+                        if (djson) {
+
+                            var data = google.visualization.arrayToDataTable(djson);
+
+                            var myTitle = "Потрачено по категориям расходов c " + @Json.Serialize(Model.PeriodBegin.ToShortDateString()) + " по " + @Json.Serialize(Model.PeriodEnd.ToShortDateString());
+                            var chart = new google.visualization.ColumnChart(document.getElementById('column_chart_div'));
+                            var options = {
+
+                                title: myTitle,
+                                width: '50%',
+                                height: '50%',
+                                legend: { position: 'top', maxLines: 3 },
+                                animation: {
+                                    duration: 1000,
+                                    easing: 'out'
+                                },
+                                bar: { groupWidth: '75%' },
+                                annotations: {
+                                    textStyle: {
+                                        color: 'black',
+                                    }
+                                },
+                                colors: ['#e0440e',  '#f6c7b6'],
+
+                            };
+
+
+                            chart.draw(data, options);
+                        }
+                    },
+                    error: function () {
+                        alert("Ошибка загрузки данных. Повторите пожалуйста");
+                    }
+                });
+            };
+            $(document).ready(function () {
+                $(window).resize(function () {
+                    myCallback();
+                });
+            });
+    });
+
+</script>
+
+<script>
+    function startLoader() {
+        $("#button_export").text('Загрузка...');
+        $("#button_export").attr('disabled',true);
+    }
+
+    function stopLoader() {
+        $("#button_export").text('Экспорт в EXCEL');
+        $("#button_export").attr('disabled', false);
+    }
+
+   function exportToExcel() {
+       list =@Json.Serialize(Model.CompareList);
+       PeriodBegin =@Json.Serialize(Model.PeriodBegin);
+       PeriodEnd=@Json.Serialize(Model.PeriodEnd);
+       $.ajax({
+           url: '/ConverterToExcelHelper/ConvertToExcelGeneralAnalytic',
+           type: 'POST',
+           beforeSend: function () {
+           startLoader();
+           },
+           xhr: function () {
+               var xhr = new XMLHttpRequest();
+               xhr.onreadystatechange = function () {
+                   if (xhr.readyState == 2) {
+                       if (xhr.status == 200) {
+                           xhr.responseType = "blob";
+                       } else {
+                           xhr.responseType = "text";
+                       }
+                   }
+               };
+               return xhr;
+           },
+           data: {
+               list: list,
+               PeriodBegin,
+               PeriodEnd
+           },
+           success: function (response) {
+               var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+               var url = window.URL.createObjectURL(blob);
+               var a = document.createElement("a");
+               a.href = url;
+               a.download = "@User.Identity.Name.ToString()" + "_Incomes_Spendings_" + "@DateTime.Now.ToShortDateString()" + ".xlsx";
+               document.body.appendChild(a);
+               a.click();
+           },
+              complete: function () {
+                    stopLoader();
+                    }
+                });
+       return false;
+    }
+
+</script>
